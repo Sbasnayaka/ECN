@@ -57,14 +57,14 @@ const CategoryPage = ({ categoryName, categorySlug }) => {
 
                         {/* Articles List */}
                         {articles.map((article) => (
-                            <article key={article.id} className="flex flex-col sm:flex-row gap-4 bg-white p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                            <article key={article.id} className="group flex flex-col sm:flex-row gap-4 bg-white p-4 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 rounded-lg cursor-pointer">
                                 {/* Thumbnail */}
-                                <div className="sm:w-1/3 shrink-0 overflow-hidden">
+                                <div className="sm:w-1/3 shrink-0 overflow-hidden rounded">
                                     <Link to={`/article/${article.id}`}>
                                         <img
                                             src={article.image}
                                             alt={article.title}
-                                            className="w-full h-48 sm:h-full object-cover rounded hover:scale-105 transition-transform duration-300"
+                                            className="w-full h-48 sm:h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                         />
                                     </Link>
                                 </div>
@@ -75,7 +75,7 @@ const CategoryPage = ({ categoryName, categorySlug }) => {
                                         <span className="text-gray-400 text-xs font-medium">🕒 {article.time}</span>
                                     </div>
                                     <Link to={`/article/${article.id}`}>
-                                        <h3 className="text-xl font-bold leading-tight mb-2 hover:text-blue-600 transition-colors">
+                                        <h3 className="text-xl font-bold leading-tight mb-2 group-hover:text-blue-600 text-ecn-dark-blue transition-colors">
                                             {article.title}
                                         </h3>
                                     </Link>
@@ -97,8 +97,8 @@ const CategoryPage = ({ categoryName, categorySlug }) => {
                                 onClick={handleLoadMore}
                                 disabled={isLoading}
                                 className={`font-bold py-3 px-10 rounded transition-all ${isLoading
-                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                        : 'bg-white border-2 border-ecn-navy text-ecn-navy hover:bg-ecn-navy hover:text-white'
+                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                    : 'bg-white border-2 border-ecn-navy text-ecn-navy hover:bg-ecn-navy hover:text-white'
                                     }`}
                             >
                                 {isLoading ? 'පූරණය වෙමින් පවතී...' : 'තවත් පුවත් පෙන්වන්න (Load More)'}

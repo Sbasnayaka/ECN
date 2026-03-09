@@ -45,14 +45,14 @@ const NewsFeed = () => {
 
             <div className="flex flex-col gap-6">
                 {articles.map((article) => (
-                    <article key={article.id} className="flex flex-col sm:flex-row gap-4 bg-white p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                    <article key={article.id} className="group flex flex-col sm:flex-row gap-4 bg-white p-4 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 rounded-lg cursor-pointer">
                         {/* Thumbnail */}
-                        <div className="sm:w-1/3 shrink-0 overflow-hidden">
+                        <div className="sm:w-1/3 shrink-0 overflow-hidden rounded">
                             <Link to={`/article/${article.id}`}>
                                 <img
                                     src={article.image}
                                     alt={article.title}
-                                    className="w-full h-48 sm:h-full object-cover rounded hover:scale-105 transition-transform duration-300"
+                                    className="w-full h-48 sm:h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                 />
                             </Link>
                         </div>
@@ -64,7 +64,7 @@ const NewsFeed = () => {
                                 <span className="text-gray-400 text-[11px]">• {article.time}</span>
                             </div>
                             <Link to={`/article/${article.id}`}>
-                                <h3 className="text-xl font-bold leading-tight mb-2 hover:text-ecn-dark-blue transition-colors">
+                                <h3 className="text-xl font-bold leading-tight mb-2 group-hover:text-blue-600 text-ecn-dark-blue transition-colors">
                                     {article.title}
                                 </h3>
                             </Link>
