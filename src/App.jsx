@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import HeroGrid from './components/HeroGrid';
 
 import NewsFeed from './components/NewsFeed';
+import RightSidebar from './components/RightSidebar';
 
 // Placeholder imports for pages
 const Home = () => (
@@ -17,11 +18,9 @@ const Home = () => (
           <NewsFeed />
         </div>
 
-        {/* Right Column: Sidebar (To be built next) */}
+        {/* Right Column: Sidebar */}
         <div className="lg:w-1/3">
-          <div className="bg-gray-100 p-4 rounded h-full min-h-[500px] flex items-center justify-center border-2 border-dashed border-gray-300">
-            <span className="text-gray-500 font-medium">Sidebar Placeholder</span>
-          </div>
+          <RightSidebar />
         </div>
       </div>
     </div>
