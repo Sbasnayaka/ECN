@@ -7,6 +7,8 @@ import NewsFeed from './components/NewsFeed';
 import RightSidebar from './components/RightSidebar';
 import CategoryPage from './pages/CategoryPage';
 import ArticlePage from './pages/ArticlePage';
+import AboutPage from './pages/AboutPage';
+import AdvertisingPage from './pages/AdvertisingPage';
 
 const Home = () => (
   <div className="w-full">
@@ -26,10 +28,6 @@ const Home = () => (
     </div>
   </div>
 );
-
-// Placeholder imports for static pages
-const Advertising = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">Advertising</h1></div>;
-const About = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">About us</h1></div>;
 
 function App() {
   return (
@@ -56,8 +54,8 @@ function App() {
             <Route path="/library" element={<CategoryPage categoryName="පුස්තකාලය" categorySlug="library" />} />
 
             {/* Static Content Routes */}
-            <Route path="/advertising" element={<Advertising />} />
-            <Route path="/about" element={<About />} />
+            <Route path="/advertising" element={<AdvertisingPage />} />
+            <Route path="/about" element={<AboutPage />} />
           </Routes>
         </main>
         <Footer />
