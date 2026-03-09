@@ -1,4 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navigation from './components/Navigation';
+import NewsTicker from './components/NewsTicker';
+import Footer from './components/Footer';
 
 // Placeholder imports for pages
 const Home = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">මුල් පිටුව (Home)</h1></div>;
@@ -18,9 +21,10 @@ const About = () => <div className="p-8"><h1 className="text-3xl font-bold text-
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-ecn-white text-ecn-black">
-        {/* Navigation will go here later */}
-        <main>
+      <div className="min-h-screen bg-ecn-white text-ecn-black flex flex-col">
+        <Navigation />
+        <NewsTicker />
+        <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/main-news" element={<MainNews />} />
@@ -37,6 +41,7 @@ function App() {
             <Route path="/about" element={<About />} />
           </Routes>
         </main>
+        <Footer />
       </div>
     </Router>
   )
