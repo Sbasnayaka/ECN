@@ -73,10 +73,18 @@ const ArticlePage = () => {
                         </div>
 
                         {/* Article Body Content */}
-                        <div className="prose prose-lg max-w-none text-gray-800 leading-relaxed font-medium">
-                            {/* Rendering paragraphs separated by two newlines */}
+                        <div className="max-w-none text-gray-800 font-medium">
+                            {/* Rendering paragraphs with premium editorial CSS */}
                             {articleInfo.content.split('\n\n').map((paragraph, index) => (
-                                <p key={index} className="mb-6">{paragraph.trim()}</p>
+                                <p
+                                    key={index}
+                                    className={`mb-6 text-[17px] md:text-[19px] leading-[1.8] md:leading-[2] text-justify ${index === 0
+                                            ? 'first-letter:text-6xl first-letter:font-black first-letter:text-ecn-navy first-letter:bg-blue-50 first-letter:px-2 first-letter:py-1 first-letter:mr-3 first-letter:float-left first-letter:rounded first-letter:-mt-2'
+                                            : ''
+                                        }`}
+                                >
+                                    {paragraph.trim()}
+                                </p>
                             ))}
                         </div>
 
