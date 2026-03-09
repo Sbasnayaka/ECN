@@ -6,6 +6,7 @@ import HeroGrid from './components/HeroGrid';
 import NewsFeed from './components/NewsFeed';
 import RightSidebar from './components/RightSidebar';
 import CategoryPage from './pages/CategoryPage';
+import ArticlePage from './pages/ArticlePage';
 
 const Home = () => (
   <div className="w-full">
@@ -39,6 +40,10 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
+            {/* Dynamic Single Article Route */}
+            <Route path="/article/:id" element={<ArticlePage />} />
+
+            {/* Category Routes */}
             <Route path="/main-news" element={<CategoryPage categoryName="ප්‍රධාන පුවත්" categorySlug="main-news" />} />
             <Route path="/latest" element={<CategoryPage categoryName="අලුත් පුවත්" categorySlug="latest" />} />
             <Route path="/local" element={<CategoryPage categoryName="දේශීය පුවත්" categorySlug="local" />} />
@@ -49,6 +54,8 @@ function App() {
             <Route path="/arts" element={<CategoryPage categoryName="කලාව" categorySlug="arts" />} />
             <Route path="/world" element={<CategoryPage categoryName="විදෙස්" categorySlug="world" />} />
             <Route path="/library" element={<CategoryPage categoryName="පුස්තකාලය" categorySlug="library" />} />
+
+            {/* Static Content Routes */}
             <Route path="/advertising" element={<Advertising />} />
             <Route path="/about" element={<About />} />
           </Routes>

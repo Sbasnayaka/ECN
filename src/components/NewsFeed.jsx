@@ -72,7 +72,7 @@ const NewsFeed = () => {
                                 {article.excerpt}
                             </p>
                             <div>
-                                <Link to={`/article/${article.id}`} className="inline-block bg-ecn-dark-blue text-white text-xs px-4 py-2 hover:bg-ecn-navy transition-colors rounded">
+                                <Link to={`/article/${article.id}`} className="inline-block bg-ecn-navy text-white text-xs font-medium px-4 py-2 hover:bg-ecn-dark-blue transition-colors rounded">
                                     තව කියවන්න (Read More)
                                 </Link>
                             </div>
@@ -81,10 +81,10 @@ const NewsFeed = () => {
                 ))}
             </div>
 
-            {/* Load More Button Placeholder */}
-            <div className="mt-8 text-center">
-                <button className="bg-ecn-white border-2 border-ecn-navy text-ecn-navy font-bold py-2 px-8 rounded hover:bg-ecn-navy hover:text-white transition-colors">
-                    තවත් පුවත් පෙන්වන්න (Load More)
+            {/* Load More Button */}
+            <div className="mt-8 text-center bg-gray-50 py-4 border border-gray-200">
+                <button className="bg-white border-2 border-ecn-navy text-ecn-navy hover:bg-ecn-navy hover:text-white font-bold py-2 px-8 rounded transition-colors">
+                    පැරණි පුවත් පෙන්වන්න (Load More)
                 </button>
             </div>
         </div>
