@@ -3,11 +3,10 @@ import Navigation from './components/Navigation';
 import NewsTicker from './components/NewsTicker';
 import Footer from './components/Footer';
 import HeroGrid from './components/HeroGrid';
-
 import NewsFeed from './components/NewsFeed';
 import RightSidebar from './components/RightSidebar';
+import CategoryPage from './pages/CategoryPage';
 
-// Placeholder imports for pages
 const Home = () => (
   <div className="w-full">
     <HeroGrid />
@@ -26,16 +25,8 @@ const Home = () => (
     </div>
   </div>
 );
-const MainNews = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">ප්‍රධාන පුවත් (Main News)</h1></div>;
-const LatestNews = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">අලුත් පුවත් (Latest News)</h1></div>;
-const LocalNews = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">දේශීය පුවත් (Local News)</h1></div>;
-const Gossip = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">ගොසිප් (Gossip)</h1></div>;
-const Politics = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">දේශපාලන (Politics)</h1></div>;
-const Business = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">ව්‍යාපාරික (Business)</h1></div>;
-const Sports = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">ක්‍රීඩා (Sports)</h1></div>;
-const Arts = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">කලාව (Arts)</h1></div>;
-const World = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">විදෙස් (World)</h1></div>;
-const Library = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">පුස්තකාලය (Library)</h1></div>;
+
+// Placeholder imports for static pages
 const Advertising = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">Advertising</h1></div>;
 const About = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">About us</h1></div>;
 
@@ -48,16 +39,16 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/main-news" element={<MainNews />} />
-            <Route path="/latest" element={<LatestNews />} />
-            <Route path="/local" element={<LocalNews />} />
-            <Route path="/gossip" element={<Gossip />} />
-            <Route path="/politics" element={<Politics />} />
-            <Route path="/business" element={<Business />} />
-            <Route path="/sports" element={<Sports />} />
-            <Route path="/arts" element={<Arts />} />
-            <Route path="/world" element={<World />} />
-            <Route path="/library" element={<Library />} />
+            <Route path="/main-news" element={<CategoryPage categoryName="ප්‍රධාන පුවත්" categorySlug="main-news" />} />
+            <Route path="/latest" element={<CategoryPage categoryName="අලුත් පුවත්" categorySlug="latest" />} />
+            <Route path="/local" element={<CategoryPage categoryName="දේශීය පුවත්" categorySlug="local" />} />
+            <Route path="/gossip" element={<CategoryPage categoryName="ගොසිප්" categorySlug="gossip" />} />
+            <Route path="/politics" element={<CategoryPage categoryName="දේශපාලන" categorySlug="politics" />} />
+            <Route path="/business" element={<CategoryPage categoryName="ව්‍යාපාරික" categorySlug="business" />} />
+            <Route path="/sports" element={<CategoryPage categoryName="ක්‍රීඩා" categorySlug="sports" />} />
+            <Route path="/arts" element={<CategoryPage categoryName="කලාව" categorySlug="arts" />} />
+            <Route path="/world" element={<CategoryPage categoryName="විදෙස්" categorySlug="world" />} />
+            <Route path="/library" element={<CategoryPage categoryName="පුස්තකාලය" categorySlug="library" />} />
             <Route path="/advertising" element={<Advertising />} />
             <Route path="/about" element={<About />} />
           </Routes>
