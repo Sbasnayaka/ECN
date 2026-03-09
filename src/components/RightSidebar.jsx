@@ -1,4 +1,9 @@
 import { Link } from 'react-router-dom';
+import fbIcon from '../assets/icons/facebook.png';
+import instaIcon from '../assets/icons/instagram.png';
+import tiktokIcon from '../assets/icons/tiktok.png';
+import xIcon from '../assets/icons/x-icon.png';
+import ytIcon from '../assets/icons/youtube.png';
 
 const RightSidebar = () => {
     // Mock data for the most read articles
@@ -24,11 +29,11 @@ const RightSidebar = () => {
             <div className="bg-ecn-navy text-white p-6 shadow-md rounded-t border-b-4 border-ecn-dark-blue">
                 <h3 className="text-xl font-bold mb-4">අප හා සම්බන්ධ වන්න</h3>
                 <div className="flex gap-4 mb-4">
-                    {/* Placeholder colored boxes for social icons */}
-                    <div className="w-10 h-10 bg-blue-600 rounded flex items-center justify-center cursor-pointer hover:bg-blue-700 transition">FB</div>
-                    <div className="w-10 h-10 bg-blue-400 rounded flex items-center justify-center cursor-pointer hover:bg-blue-500 transition">TW</div>
-                    <div className="w-10 h-10 bg-red-600 rounded flex items-center justify-center cursor-pointer hover:bg-red-700 transition">YT</div>
-                    <div className="w-10 h-10 bg-green-500 rounded flex items-center justify-center cursor-pointer hover:bg-green-600 transition">WA</div>
+                    <a href="#" className="w-8 h-8 flex items-center justify-center hover:opacity-80 transition cursor-pointer"><img src={fbIcon} alt="Facebook" className="w-full h-full object-contain" /></a>
+                    <a href="#" className="w-8 h-8 flex items-center justify-center hover:opacity-80 transition cursor-pointer"><img src={xIcon} alt="X" className="w-full h-full object-contain" /></a>
+                    <a href="#" className="w-8 h-8 flex items-center justify-center hover:opacity-80 transition cursor-pointer"><img src={ytIcon} alt="YouTube" className="w-full h-full object-contain" /></a>
+                    <a href="#" className="w-8 h-8 flex items-center justify-center hover:opacity-80 transition cursor-pointer"><img src={instaIcon} alt="Instagram" className="w-full h-full object-contain" /></a>
+                    <a href="#" className="w-8 h-8 flex items-center justify-center hover:opacity-80 transition cursor-pointer"><img src={tiktokIcon} alt="TikTok" className="w-full h-full object-contain" /></a>
                 </div>
                 <p className="text-sm text-gray-200">නවතම පුවත් සඳහා අපගේ සමාජ මාධ්‍ය ජාලයන් හා එක්වන්න.</p>
             </div>

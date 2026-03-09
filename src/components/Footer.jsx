@@ -1,4 +1,9 @@
 import { Link } from 'react-router-dom';
+import fbIcon from '../assets/icons/facebook.png';
+import instaIcon from '../assets/icons/instagram.png';
+import tiktokIcon from '../assets/icons/tiktok.png';
+import xIcon from '../assets/icons/x-icon.png';
+import ytIcon from '../assets/icons/youtube.png';
 
 const Footer = () => {
     return (
@@ -32,12 +37,19 @@ const Footer = () => {
                 {/* Contact info */}
                 <div>
                     <h3 className="text-lg font-semibold mb-4 border-b border-gray-700 pb-2">අප හා සම්බන්ධ වන්න</h3>
-                    <ul className="space-y-2 text-sm text-gray-300">
+                    <ul className="space-y-2 text-sm text-gray-300 mb-6">
                         <li><Link to="/about" className="hover:text-white">About Us</Link></li>
                         <li><Link to="/advertising" className="hover:text-white">Advertising Rates</Link></li>
                         <li className="pt-2">Email: info@ecapitalnews.com</li>
                         <li>Hotline: 011 234 5678</li>
                     </ul>
+                    <div className="flex gap-4">
+                        <a href="#" className="w-6 h-6 hover:opacity-80 transition cursor-pointer"><img src={fbIcon} alt="Facebook" className="w-full h-full object-contain" /></a>
+                        <a href="#" className="w-6 h-6 hover:opacity-80 transition cursor-pointer"><img src={xIcon} alt="X" className="w-full h-full object-contain" /></a>
+                        <a href="#" className="w-6 h-6 hover:opacity-80 transition cursor-pointer"><img src={ytIcon} alt="YouTube" className="w-full h-full object-contain" /></a>
+                        <a href="#" className="w-6 h-6 hover:opacity-80 transition cursor-pointer"><img src={instaIcon} alt="Instagram" className="w-full h-full object-contain" /></a>
+                        <a href="#" className="w-6 h-6 hover:opacity-80 transition cursor-pointer"><img src={tiktokIcon} alt="TikTok" className="w-full h-full object-contain" /></a>
+                    </div>
                 </div>
 
             </div>
