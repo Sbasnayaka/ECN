@@ -2,9 +2,31 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import NewsTicker from './components/NewsTicker';
 import Footer from './components/Footer';
+import HeroGrid from './components/HeroGrid';
+
+import NewsFeed from './components/NewsFeed';
 
 // Placeholder imports for pages
-const Home = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">මුල් පිටුව (Home)</h1></div>;
+const Home = () => (
+  <div className="w-full">
+    <HeroGrid />
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Left Column: Main News Feed */}
+        <div className="lg:w-2/3">
+          <NewsFeed />
+        </div>
+
+        {/* Right Column: Sidebar (To be built next) */}
+        <div className="lg:w-1/3">
+          <div className="bg-gray-100 p-4 rounded h-full min-h-[500px] flex items-center justify-center border-2 border-dashed border-gray-300">
+            <span className="text-gray-500 font-medium">Sidebar Placeholder</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
 const MainNews = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">ප්‍රධාන පුවත් (Main News)</h1></div>;
 const LatestNews = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">අලුත් පුවත් (Latest News)</h1></div>;
 const LocalNews = () => <div className="p-8"><h1 className="text-3xl font-bold text-ecn-navy">දේශීය පුවත් (Local News)</h1></div>;
