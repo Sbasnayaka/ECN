@@ -1,76 +1,150 @@
-import { Link } from 'react-router-dom';
-import fbIcon from '../assets/icons/facebook.png';
-import instaIcon from '../assets/icons/instagram.png';
-import tiktokIcon from '../assets/icons/tiktok.png';
-import xIcon from '../assets/icons/x-icon.png';
-import ytIcon from '../assets/icons/youtube.png';
+import React from "react";
+import SectionHeader from "./SectionHeader";
+import VerticalNewsCard from "./VerticalNewsCard";
+import HorizontalNewsCard from "./HorizontalNewsCard";
+import LoadMoreBtn from "./LoadMoreBtn";
+import AdBanner from "./AdBanner";
+
+import ytIcon from "../assets/icons/youtube.png";
 
 const RightSidebar = () => {
-    // Mock data for the most read articles
-    const mostRead = [
-        { id: 8, title: "රට පුරා විදුලි කප්පාදුවක්", time: "පැය 1කට පෙර" },
-        { id: 9, title: "රන් මිල යළිත් ඉහළට", time: "පැය 2කට පෙර" },
-        { id: 10, title: "නව දුම්රිය කාලසටහනක් හෙට සිට", time: "පැය 4කට පෙර" },
-        { id: 11, title: "ආසියානු කුසලානය සඳහා දැවැන්ත සූදානමක්", time: "පැය 5කට පෙර" },
-        { id: 12, title: "ජනප්‍රිය නිළියකගේ හදිසි අභාවය", time: "පැය 7කට පෙර" }
-    ];
+  // Mock Data for the sidebar sections
+  const societyGossips = [
+    {
+      id: 201,
+      title: "මෙවර සම්මාන උළෙලේදී කැපී පෙනුණු තරු සහ ඔවුන්ගේ විලාසිතා",
+      date: "2026-03-09",
+    },
+    {
+      id: 202,
+      title: "ජනප්‍රිය ගායන ශිල්පියාගේ නවතම ගීතය අන්තර්ජාලය කැළඹූ අයුරු",
+      date: "2026-03-08",
+    },
+  ];
 
-    return (
-        <aside className="w-full flex flex-col gap-8">
+  const otherNews = [
+    {
+      id: 203,
+      title: "කොළඹ රථවාහන තදබදයට නව විසඳුමක්",
+      date: "පැයකට පෙර",
+      excerpt: "නව මාර්ග සැලැස්මක් පිළිබඳව සාකච්ඡා...",
+    },
+    {
+      id: 204,
+      title: "ගෑස් මිල යළිත් වරක් සංශෝධනය වන ලකුණු",
+      date: "පැය 2කට පෙර",
+      excerpt: "මිල කමිටුව අද රැස්වීමට නියමිතයි...",
+    },
+    {
+      id: 205,
+      title: "ඩිජිටල් හැඳුනුම්පත ලබන මස සිට නිකුත් කිරීමට සූදානම්",
+      date: "පැය 3කට පෙර",
+      excerpt: "සියලු කටයුතු සූදානම් බව දෙපාර්තමේන්තුව කියයි.",
+    },
+    {
+      id: 206,
+      title: "විදේශ ශ්‍රමිකයින්ගෙන් මෙරටට වාර්තාගත ආදායමක් හිමිවෙයි",
+      date: "පැය 5කට පෙර",
+      excerpt: "මහ බැංකු වාර්තා මඟින් තහවුරු කරයි.",
+    },
+  ];
 
-            {/* Ad Space 1 (Top Square) */}
-            <div className="bg-gray-100 p-4 shrink-0 flex items-center justify-center border border-gray-200">
-                <div className="w-full h-[250px] bg-gray-200 flex items-center justify-center text-gray-400 text-sm">
-                    Advertisement Space (300x250)
-                </div>
-            </div>
+  const weatherNews = {
+    id: 207,
+    title: "බස්නාහිර සහ සබරගමුව පළාත්වලට අද සවස තද වැසි",
+    date: "2026-03-10",
+    excerpt:
+      "ඉදිරි පැය 24 තුළ දිවයිනේ නිරිතදිග කොටසේ වැසි තත්ත්වයේ වර්ධනයක් අපේක්ෂා කෙරෙන බව කාලගුණ විද්‍යා දෙපාර්තමේන්තුව නිවේදනය කරයි.",
+  };
 
-            {/* Social Connect Widget */}
-            <div className="bg-ecn-navy text-white p-6 shadow-md rounded-t border-b-4 border-ecn-dark-blue">
-                <h3 className="text-xl font-bold mb-4">අප හා සම්බන්ධ වන්න</h3>
-                <div className="flex gap-4 mb-4">
-                    <a href="#" className="w-8 h-8 flex items-center justify-center hover:opacity-80 transition cursor-pointer"><img src={fbIcon} alt="Facebook" className="w-full h-full object-contain" /></a>
-                    <a href="#" className="w-8 h-8 flex items-center justify-center hover:opacity-80 transition cursor-pointer"><img src={xIcon} alt="X" className="w-full h-full object-contain" /></a>
-                    <a href="#" className="w-8 h-8 flex items-center justify-center hover:opacity-80 transition cursor-pointer"><img src={ytIcon} alt="YouTube" className="w-full h-full object-contain" /></a>
-                    <a href="#" className="w-8 h-8 flex items-center justify-center hover:opacity-80 transition cursor-pointer"><img src={instaIcon} alt="Instagram" className="w-full h-full object-contain" /></a>
-                    <a href="#" className="w-8 h-8 flex items-center justify-center hover:opacity-80 transition cursor-pointer"><img src={tiktokIcon} alt="TikTok" className="w-full h-full object-contain" /></a>
-                </div>
-                <p className="text-sm text-gray-200">නවතම පුවත් සඳහා අපගේ සමාජ මාධ්‍ය ජාලයන් හා එක්වන්න.</p>
-            </div>
+  return (
+    <aside className="w-full flex flex-col gap-8">
+      {/* Section 14: YouTube Channel Dropdown Section */}
+      <div className="bg-[#e0f2fe] border border-blue-200 p-6 flex flex-col items-center justify-center text-center shadow-sm">
+        <div className="w-16 h-16 mb-3 opacity-90">
+          <img
+            src={ytIcon}
+            alt="YouTube"
+            className="w-full h-full object-contain filter drop-shadow-md"
+          />
+        </div>
+        <h3 className="text-lg font-bold text-ecn-navy mb-2">
+          youtube channel video drop down section
+        </h3>
+        <p className="text-sm text-gray-600 mb-4 font-noto">
+          අපගේ නිල යූටියුබ් නාලිකාව සමග එක්වන්න
+        </p>
+        <a
+          href="#"
+          className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full text-sm font-bold transition-colors shadow"
+        >
+          Subscribe Now
+        </a>
+      </div>
 
-            {/* Most Read (Trending) Section */}
-            <div className="bg-white border border-gray-200 shadow-sm">
-                <h3 className="text-xl font-bold p-4 bg-ecn-dark-blue text-white">වැඩිපුරම කියවූ පුවත්</h3>
-                <div className="flex flex-col">
-                    {mostRead.map((article, index) => (
-                        <Link
-                            key={article.id}
-                            to={`/article/${article.id}`}
-                            className="flex gap-3 p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors group"
-                        >
-                            <div className="text-3xl font-black text-gray-200 group-hover:text-ecn-navy transition-colors">
-                                {index + 1}
-                            </div>
-                            <div className="flex flex-col justify-center">
-                                <h4 className="font-bold text-sm leading-snug group-hover:text-ecn-dark-blue transition-colors">
-                                    {article.title}
-                                </h4>
-                                <span className="text-gray-400 text-[10px] mt-1">{article.time}</span>
-                            </div>
-                        </Link>
-                    ))}
-                </div>
-            </div>
+      {/* Section 15: Society Gossips */}
+      <div className="flex flex-col bg-white border border-gray-100 shadow-sm">
+        <SectionHeader title="society gossips" theme="grey" />
+        <div className="p-4 flex flex-col gap-6">
+          {societyGossips.map((article) => (
+            <VerticalNewsCard
+              key={article.id}
+              id={article.id}
+              title={article.title}
+              date={article.date}
+            />
+          ))}
+        </div>
+        <LoadMoreBtn
+          onClick={() => console.log("load gossips")}
+          text="Load more"
+        />
+      </div>
 
-            {/* Ad Space 2 (Skyscraper) */}
-            <div className="bg-gray-100 p-4 shrink-0 flex items-center justify-center border border-gray-200">
-                <div className="w-full h-[600px] bg-gray-200 flex items-center justify-center text-gray-400 text-sm">
-                    Advertisement Space (300x600)
-                </div>
-            </div>
+      {/* Section 16: Medium Advertisement Banner 05 */}
+      <AdBanner title="Medium advertisement Banner 05" size="medium" />
 
-        </aside>
-    );
+      {/* Section 17: ....... news */}
+      <div className="flex flex-col bg-white border border-gray-100 shadow-sm">
+        <SectionHeader title="....... news" theme="grey" />
+        <div className="flex flex-col py-2">
+          {otherNews.map((article) => (
+            <HorizontalNewsCard
+              key={article.id}
+              id={article.id}
+              title={article.title}
+              date={article.date}
+              excerpt={article.excerpt}
+            />
+          ))}
+        </div>
+        <LoadMoreBtn
+          onClick={() => console.log("load other news")}
+          text="Load more"
+        />
+      </div>
+
+      {/* Section 18: Weather News */}
+      <div className="flex flex-col bg-white border border-gray-100 shadow-sm">
+        <SectionHeader title="weather news" theme="grey" />
+        <div className="p-4 flex flex-col gap-6">
+          <VerticalNewsCard
+            id={weatherNews.id}
+            title={weatherNews.title}
+            date={weatherNews.date}
+            excerpt={weatherNews.excerpt}
+          />
+        </div>
+        <LoadMoreBtn
+          onClick={() => console.log("load weather")}
+          text="Load more"
+        />
+      </div>
+
+      {/* Section 19: Medium Advertisement Banner 06 */}
+      <AdBanner title="Medium advertisement Banner 06" size="medium" />
+    </aside>
+  );
 };
 
 export default RightSidebar;
