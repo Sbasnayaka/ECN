@@ -1,94 +1,175 @@
-import { Link } from 'react-router-dom';
+import AdBanner from "./AdBanner";
+import MainNewsSlider from "./MainNewsSlider";
+import SectionHeader from "./SectionHeader";
+import HorizontalNewsCard from "./HorizontalNewsCard";
+import VerticalNewsCard from "./VerticalNewsCard";
+import LoadMoreBtn from "./LoadMoreBtn";
 
 const NewsFeed = () => {
-    // Mock data for the news feed
-    const articles = [
-        {
-            id: 4,
-            title: "අධ්‍යාපන අමාත්‍යාංශයෙන් ගුරුවරුන්ට විශේෂ නිවේදනයක්",
-            excerpt: "දිවයිනේ සියලුම රජයේ පාසල්වල ගුරුවරුන් සඳහා නව චක්‍රලේඛයක් නිකුත් කිරීමට අධ්‍යාපන අමාත්‍යාංශය පියවර ගෙන ඇත...",
-            image: "https://via.placeholder.com/300x200/112240/ffffff?text=Education+News",
-            category: "දේශීය පුවත්",
-            time: "පැයකට පෙර"
-        },
-        {
-            id: 5,
-            title: "විදෙස්ගත ශ්‍රමිකයින්ගේ ප්‍රේෂණ යළිත් ඉහළට",
-            excerpt: "පසුගිය මාසයට සාපේක්ෂව මෙම මාසයේදී විදෙස්ගත ශ්‍රී ලාංකිකයින් එවන ලද විදේශ විනිමය ප්‍රමාණය සියයට 15කින් වර්ධනය වී තිබේ...",
-            image: "https://via.placeholder.com/300x200/112240/ffffff?text=Economy+News",
-            category: "ව්‍යාපාරික",
-            time: "පැය 3කට පෙර"
-        },
-        {
-            id: 6,
-            title: "නව චිත්‍රපටයක් ළඟදීම තිරයට",
-            excerpt: "ශ්‍රී ලාංකේය සිනමාවට නව මානයක් එක් කරමින්, ප්‍රවීණ අධ්‍යක්ෂවරයෙකුගේ නවතම සිනමා සිත්තම ලබන මස ප්‍රදර්ශනය ඇරඹේ...",
-            image: "https://via.placeholder.com/300x200/112240/ffffff?text=Arts+News",
-            category: "කලාව",
-            time: "පැය 6කට පෙර"
-        },
-        {
-            id: 7,
-            title: "ජාතික රෝහලට නවීන වෛද්‍ය උපකරණ තොගයක්",
-            excerpt: "විදේශ ආධාර යටතේ කොළඹ ජාතික රෝහල වෙත රුපියල් මිලියන 500ක් වටිනා නවීන වෛද්‍ය උපකරණ තොගයක් අද දින ලබාදෙන ලදී...",
-            image: "https://via.placeholder.com/300x200/112240/ffffff?text=Health+News",
-            category: "දේශීය පුවත්",
-            time: "පැය 8කට පෙර"
-        }
-    ];
+  // Shared Mock Data for structural blocks
+  const hotNews = [
+    {
+      id: 4,
+      title: "දිවයිනේ ප්‍රදේශ කිහිපයකට අදත් වැසි",
+      excerpt: "කාලගුණ විද්‍යා දෙපාර්තමේන්තුවෙන් නවතම නිවේදනයක් නිකුත් කෙරේ...",
+      image:
+        "https://via.placeholder.com/400x250/112240/ffffff?text=Hot+News+01",
+      time: "පැයකට පෙර",
+    },
+    {
+      id: 5,
+      title: "රන් මිලෙහි විශාල වෙනසක්",
+      excerpt: "ලෝක වෙළඳපොළේ රන් මිල වාර්තාගත ලෙස ඉහළ යයි...",
+      image:
+        "https://via.placeholder.com/400x250/112240/ffffff?text=Hot+News+02",
+      time: "පැය 3කට පෙර",
+    },
+  ];
 
-    return (
-        <div className="flex flex-col gap-6">
-            <h2 className="text-2xl font-bold border-b-2 border-ecn-navy pb-2 mb-2">
-                <span className="bg-ecn-navy text-white px-4 py-1 inline-block">නවතම පුවත්</span>
-            </h2>
+  const politicsNews = [
+    {
+      id: 6,
+      title: "පාර්ලිමේන්තුව හෙට රැස්වෙයි",
+      excerpt: "විශේෂ පනත් කිහිපයක් විවාදයට ගැනීමට නියමිතයි...",
+      image:
+        "https://via.placeholder.com/400x250/000080/ffffff?text=Politics+01",
+      time: "පැය 2කට පෙර",
+    },
+    {
+      id: 7,
+      title: "නව කැබිනට් මණ්ඩලය දිවුරුම් දෙයි",
+      excerpt: "ජනාධිපති ලේකම් කාර්යාලයේදී දිවුරුම් දීම සිදුවිය...",
+      image:
+        "https://via.placeholder.com/400x250/000080/ffffff?text=Politics+02",
+      time: "පැය 4කට පෙර",
+    },
+  ];
 
-            <div className="flex flex-col gap-6">
-                {articles.map((article) => (
-                    <article key={article.id} className="group flex flex-col sm:flex-row gap-4 bg-white p-4 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 rounded-lg cursor-pointer">
-                        {/* Thumbnail */}
-                        <div className="sm:w-1/3 shrink-0 overflow-hidden rounded">
-                            <Link to={`/article/${article.id}`}>
-                                <img
-                                    src={article.image}
-                                    alt={article.title}
-                                    className="w-full h-48 sm:h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                />
-                            </Link>
-                        </div>
+  const localNews = [
+    {
+      id: 8,
+      title: "අධිවේගී මාර්ගයේ වාහන ගාස්තු සංශෝධනයක්",
+      excerpt: "ලබන මස සිට ක්‍රියාත්මක වන පරිදි ගාස්තු සංශෝධනයක්...",
+      image: "https://via.placeholder.com/400x250/0a192f/ffffff?text=Local+01",
+      time: "පැය 5කට පෙර",
+    },
+    {
+      id: 9,
+      title: "විශ්වවිද්‍යාල සිසුන්ගේ විරෝධතාවක්",
+      excerpt: "කොළඹ ප්‍රදේශයේ දැඩි රථවාහන තදබදයක්...",
+      image: "https://via.placeholder.com/400x250/0a192f/ffffff?text=Local+02",
+      time: "පැය 6කට පෙර",
+    },
+  ];
 
-                        {/* Content */}
-                        <div className="sm:w-2/3 flex flex-col justify-center">
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="text-ecn-navy font-bold text-[11px] uppercase tracking-wider">{article.category}</span>
-                                <span className="text-gray-400 text-[11px]">• {article.time}</span>
-                            </div>
-                            <Link to={`/article/${article.id}`}>
-                                <h3 className="text-xl font-bold leading-tight mb-2 group-hover:text-blue-600 text-ecn-dark-blue transition-colors">
-                                    {article.title}
-                                </h3>
-                            </Link>
-                            <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                                {article.excerpt}
-                            </p>
-                            <div>
-                                <Link to={`/article/${article.id}`} className="inline-block bg-ecn-navy text-white text-xs font-medium px-4 py-2 hover:bg-ecn-dark-blue transition-colors rounded">
-                                    තව කියවන්න (Read More)
-                                </Link>
-                            </div>
-                        </div>
-                    </article>
-                ))}
+  const businessNews = [
+    {
+      id: 10,
+      title: "කොළඹ කොටස් වෙළෙඳපොළේ කැපී පෙනෙන වර්ධනයක්",
+      excerpt: "සියලු කොටස් මිල දර්ශකය ඒකක 200කින් ඉහළට...",
+      image:
+        "https://via.placeholder.com/400x250/333333/ffffff?text=Business+01",
+      time: "පැය 7කට පෙර",
+    },
+    {
+      id: 11,
+      title: "ඩොලරයට සාපේක්ෂව රුපියල ශක්තිමත් වෙයි",
+      excerpt: "මහ බැංකුව විසින් නවතම විනිමය අනුපාත නිකුත් කරයි...",
+      image:
+        "https://via.placeholder.com/400x250/333333/ffffff?text=Business+02",
+      time: "පැය 9කට පෙර",
+    },
+  ];
+
+  return (
+    <div className="flex flex-col gap-8 w-full">
+      {/* Section 4: 3 Small Ads */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <AdBanner size="small" />
+        <AdBanner size="small" />
+        <AdBanner size="small" />
+      </div>
+
+      {/* Section 5: Video Loop Area */}
+      <div className="w-full bg-gray-100 flex items-center justify-center p-4">
+        {/* Embedded YouTube video placeholder matching Figma request */}
+        <div className="w-full aspect-video bg-gray-300 relative rounded overflow-hidden shadow">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-red-700 transition">
+              <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[16px] border-l-white border-b-[10px] border-b-transparent ml-2"></div>
             </div>
-
-            {/* Load More Button */}
-            <div className="mt-8 text-center bg-gray-50 py-4 border border-gray-200">
-                <button className="bg-white border-2 border-ecn-navy text-ecn-navy hover:bg-ecn-navy hover:text-white font-bold py-2 px-8 rounded transition-colors">
-                    පැරණි පුවත් පෙන්වන්න (Load More)
-                </button>
-            </div>
+          </div>
+          <p className="absolute bottom-4 right-4 text-white font-bold bg-black/50 px-3 py-1 text-sm rounded">
+            Video Loop 01
+          </p>
         </div>
-    );
+      </div>
+
+      {/* Section 6: Main News Section */}
+      <div>
+        <SectionHeader theme="dark-blue" title="ප්‍රධාන පුවත්" />
+        <div className="mt-4">
+          <MainNewsSlider />
+        </div>
+      </div>
+
+      {/* Section 7: 2 Medium Ads */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <AdBanner size="medium" />
+        <AdBanner size="medium" />
+      </div>
+
+      {/* Section 8: Hot News Section */}
+      <div>
+        <SectionHeader theme="red" title="උණුසුම් පුවත්" />
+        <div className="flex flex-col gap-4 mt-4 mb-4">
+          {hotNews.map((news) => (
+            <HorizontalNewsCard key={news.id} {...news} />
+          ))}
+        </div>
+        <LoadMoreBtn text="Load more" />
+      </div>
+
+      {/* Section 9: 2 Medium Ads */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <AdBanner size="medium" />
+        <AdBanner size="medium" />
+      </div>
+
+      {/* Section 10: Politics News */}
+      <div>
+        <SectionHeader theme="dark-blue" title="දේශපාලන පුවත්" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mb-4">
+          {politicsNews.map((news) => (
+            <VerticalNewsCard key={news.id} {...news} />
+          ))}
+        </div>
+        <LoadMoreBtn text="Load more" />
+      </div>
+
+      {/* Section 11: Local News */}
+      <div>
+        <SectionHeader theme="dark-blue" title="දේශීය පුවත්" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mb-4">
+          {localNews.map((news) => (
+            <VerticalNewsCard key={news.id} {...news} />
+          ))}
+        </div>
+        <LoadMoreBtn text="Load more" />
+      </div>
+
+      {/* Section 12: Business News */}
+      <div>
+        <SectionHeader theme="dark-blue" title="ව්‍යාපාරික පුවත්" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mb-4">
+          {businessNews.map((news) => (
+            <VerticalNewsCard key={news.id} {...news} />
+          ))}
+        </div>
+        <LoadMoreBtn text="Load more" />
+      </div>
+    </div>
+  );
 };
 
 export default NewsFeed;

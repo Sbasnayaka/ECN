@@ -2,9 +2,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navigation from "./components/Navigation";
 import NewsTicker from "./components/NewsTicker";
 import Footer from "./components/Footer";
-import HeroGrid from "./components/HeroGrid";
 import NewsFeed from "./components/NewsFeed";
 import RightSidebar from "./components/RightSidebar";
+import Gallery from "./components/Gallery";
 import CategoryPage from "./pages/CategoryPage";
 import ArticlePage from "./pages/ArticlePage";
 import AboutPage from "./pages/AboutPage";
@@ -12,7 +12,6 @@ import AdvertisingPage from "./pages/AdvertisingPage";
 
 const Home = () => (
   <div className="w-full">
-    <HeroGrid />
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Left Column: Main News Feed */}
@@ -24,6 +23,11 @@ const Home = () => (
         <div className="lg:w-1/3">
           <RightSidebar />
         </div>
+      </div>
+
+      {/* Full-Width Home Page Gallery Section */}
+      <div className="w-full mt-8 md:mt-12 mb-4">
+        <Gallery />
       </div>
     </div>
   </div>
