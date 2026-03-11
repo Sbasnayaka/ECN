@@ -1,5 +1,6 @@
 import AdBanner from "./AdBanner";
 import topAdImage from "../assets/Top Advertisement  Banner.webp";
+import videoLoopGif from "../assets/WEB-SIZE-VIDEO-LOOP.gif";
 import MainNewsSlider from "./MainNewsSlider";
 import SectionHeader from "./SectionHeader";
 import HorizontalNewsCard from "./HorizontalNewsCard";
@@ -85,29 +86,16 @@ const NewsFeed = () => {
         <AdBanner size="small" image={topAdImage} />
       </div>
 
-      {/* Section 5: Video Loop Area */}
+      {/* Section 5: Video Loop Area (GIF) */}
       <div className="w-full relative rounded overflow-hidden shadow-sm">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-24 sm:h-32 object-cover object-center bg-gray-200"
-        >
-          {/* using a safe, free dummy video link for client demonstration */}
-          <source
-            src="https://www.w3schools.com/html/mov_bbb.mp4"
-            type="video/mp4"
-          />
-          Your browser does not support the video tag.
-        </video>
+        <img
+          src={videoLoopGif}
+          alt="News Video Loop"
+          className="w-full h-auto block object-contain bg-gray-200"
+        />
 
         {/* Overlay to identify the section clearly for the client */}
-        <div className="absolute inset-0 bg-black/10 flex items-center justify-center pointer-events-none">
-          <p className="text-white font-bold bg-black/60 px-4 py-1.5 text-sm rounded shadow-lg backdrop-blur-sm">
-            Video Loop 01
-          </p>
-        </div>
+        <div className="absolute inset-0 bg-black/10 flex items-center justify-center pointer-events-none"></div>
       </div>
 
       {/* Section 6: Main News Section */}
