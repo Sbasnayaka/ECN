@@ -1,9 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@300;400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  @font-face {
+    font-family: "HarshaKotu";
+    src: url("./assets/fonts/HarshaWeb-Kotu.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "HarshaBathala";
+    src: url("./assets/fonts/HarshaWeb-Bathala.woff") format("woff");
+  }
+
+  @font-face {
+    font-family: "HarshaRaum";
+    src: url("./assets/fonts/HarshaWeb-Raum.woff") format("woff");
+  }
+
   body {
-    @apply bg-ecn-white text-ecn-black font-sans antialiased;
+    @apply bg-gray-200 text-ecn-black font-noto antialiased;
   }
 }
