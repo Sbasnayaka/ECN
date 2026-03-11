@@ -7,12 +7,13 @@ const SectionHeader = ({ title, theme = "darkBlue", className = "" }) => {
     darkBlue: "bg-ecn-dark-blue border-ecn-navy",
     grey: "bg-gray-500 border-gray-600",
     mainNews: "bg-[#0b5ed7] border-[#0a58ca]", // Matched from Dasatha Lanka reference
-    orange: "bg-[#f97316] border-[#ea580c]", // Politics section custom orange
-    pink: "bg-[#FF69B4] border-[#d81b60]", // Gossip section custom pink
+    orange: "bg-[#FF7F50] border-[#ea580c]", // Politics section custom orange
+    pink: "bg-[#DB7093] border-[#d81b60]", // Gossip section custom pink
     cyan: "bg-[#00B6DC] border-[#0096B4]", // Local News custom cyan
     darkRed: "bg-[#A30000] border-[#8B0000]", // Business News custom red
     green: "bg-[#228B22] border-[#1e7a1e]", // Sports News custom green
     blue: "bg-[#0F52BA] border-[#0c449c]", // Foreign News custom blue
+    purple: "bg-[#8A2BE2] border-[#B68EE6]", // Gallery component custom purple
   };
 
   const appliedTheme = themeClasses[theme] || themeClasses.darkBlue;
