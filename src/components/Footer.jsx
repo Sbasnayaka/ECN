@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import ecnLogo from "../assets/logo.jpeg";
 import fbIcon from "../assets/icons/facebook.png";
 import instaIcon from "../assets/icons/instagram.png";
 import tiktokIcon from "../assets/icons/tiktok.png";
@@ -11,10 +12,17 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Brand & About */}
         <div>
-          <h2 className="text-2xl font-bold mb-4">
-            <span className="text-white">E Capital</span>{" "}
-            <span className="text-blue-400">News</span>
-          </h2>
+          <div className="flex items-center gap-3 mb-4">
+            <img
+              src={ecnLogo}
+              alt="ECN Logo"
+              className="w-12 h-12 rounded bg-white object-contain"
+            />
+            <h2 className="text-2xl font-bold">
+              <span className="text-white">E Capital</span>{" "}
+              <span className="text-blue-400">News</span>
+            </h2>
+          </div>
           <p className="text-gray-400 text-sm mb-4">
             ශ්‍රී ලංකාවේ ප්‍රමුඛතම සහ විශ්වාසවන්තම පුවත් වෙබ් අඩවිය. නවතම
             තොරතුරු එසැණින් ඔබ වෙත.
@@ -26,10 +34,20 @@ const Footer = () => {
           <h3 className="text-lg font-semibold mb-4 border-b border-gray-700 pb-2">
             වැදගත් සබැඳි (Quick Links)
           </h3>
-          <ul className="space-y-2 text-sm text-gray-300">
+          <ul className="grid grid-cols-2 gap-y-2 gap-x-4 text-sm text-gray-300">
+            <li>
+              <Link to="/hot" className="hover:text-white">
+                උණුසුම් පුවත්
+              </Link>
+            </li>
             <li>
               <Link to="/main-news" className="hover:text-white">
                 ප්‍රධාන පුවත්
+              </Link>
+            </li>
+            <li>
+              <Link to="/politics" className="hover:text-white">
+                දේශපාලන පුවත්
               </Link>
             </li>
             <li>
@@ -38,13 +56,28 @@ const Footer = () => {
               </Link>
             </li>
             <li>
-              <Link to="/politics" className="hover:text-white">
-                දේශපාලන
+              <Link to="/business" className="hover:text-white">
+                ව්‍යාපාරික පුවත්
               </Link>
             </li>
             <li>
               <Link to="/sports" className="hover:text-white">
-                ක්‍රීඩා
+                ක්‍රීඩා පුවත්
+              </Link>
+            </li>
+            <li>
+              <Link to="/foreign" className="hover:text-white">
+                විදෙස් පුවත්
+              </Link>
+            </li>
+            <li>
+              <Link to="/gossip" className="hover:text-white">
+                ගොසිප්
+              </Link>
+            </li>
+            <li className="col-span-2">
+              <Link to="/gallery" className="hover:text-white">
+                ඡායාරූප ගැලරිය
               </Link>
             </li>
           </ul>
