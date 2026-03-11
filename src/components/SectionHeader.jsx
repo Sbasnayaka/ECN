@@ -10,6 +10,9 @@ const SectionHeader = ({ title, theme = "darkBlue", className = "" }) => {
     orange: "bg-[#f97316] border-[#ea580c]", // Politics section custom orange
     pink: "bg-[#FF69B4] border-[#d81b60]", // Gossip section custom pink
     cyan: "bg-[#00B6DC] border-[#0096B4]", // Local News custom cyan
+    darkRed: "bg-[#A30000] border-[#8B0000]", // Business News custom red
+    green: "bg-[#228B22] border-[#1e7a1e]", // Sports News custom green
+    blue: "bg-[#0F52BA] border-[#0c449c]", // Foreign News custom blue
   };
 
   const appliedTheme = themeClasses[theme] || themeClasses.darkBlue;

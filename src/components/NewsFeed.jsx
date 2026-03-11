@@ -123,22 +123,84 @@ const NewsFeed = () => {
   // State to manage Local News card count
   const [localLimit, setLocalLimit] = useState(4);
 
-  const businessNews = [
+  // Sports News Data Block
+  const baseSportsNews = [
+    {
+      id: 12,
+      title: "ශ්‍රී ලංකා කණ්ඩායමට විශිෂ්ට ජයක්",
+      excerpt:
+        "අවසන් මහා තරගයේදී ප්‍රතිවාදීන් පරදවමින් ලෝක කුසලානය හිමිකර ගනී.",
+      image: "https://picsum.photos/400/250?random=50",
+      date: "March 11, 2026",
+    },
+    {
+      id: 13,
+      title: "පාසල් ක්‍රීඩා උළෙල අද ආරම්භ වෙයි",
+      excerpt: "දිවයින පුරා පාසල් රැසක ක්‍රීඩකයින් මෙම තරගාවලියට එක්වෙති.",
+      image: "https://picsum.photos/400/250?random=51",
+      date: "March 10, 2026",
+    },
+  ];
+
+  const sportsNewsData = Array.from({ length: 20 }).map((_, i) => ({
+    ...baseSportsNews[i % 2],
+    id: `sports-news-${i + 1}`,
+  }));
+
+  const [sportsLimit, setSportsLimit] = useState(4);
+
+  // Foreign News Data Block
+  const baseForeignNews = [
+    {
+      id: 14,
+      title: "ඇමෙරිකානු ජනාධිපතිවරණයෙන් නව වෙනසක්",
+      excerpt: "ජාත්‍යන්තර දේශපාලන කරළියේ ප්‍රබල වෙනස්කම් රැසක් නිරීක්ෂණය වේ.",
+      image: "https://picsum.photos/400/250?random=60",
+      date: "March 11, 2026",
+    },
+    {
+      id: 15,
+      title: "යුරෝපයේ දැවැන්ත ආර්ථික සමුළුව නිමාවෙයි",
+      excerpt: "ගෝලීය ආර්ථික අර්බුදයට විසඳුම් සෙවීම සඳහා ලෝක නායකයෝ රැස්වෙති.",
+      image: "https://picsum.photos/400/250?random=61",
+      date: "March 9, 2026",
+    },
+  ];
+
+  const foreignNewsData = Array.from({ length: 20 }).map((_, i) => ({
+    ...baseForeignNews[i % 2],
+    id: `foreign-news-${i + 1}`,
+  }));
+
+  const [foreignLimit, setForeignLimit] = useState(4);
+
+  const baseBusinessNews = [
     {
       id: 10,
       title: "කොළඹ කොටස් වෙළෙඳපොළේ කැපී පෙනෙන වර්ධනයක්",
-      excerpt: "සියලු කොටස් මිල දර්ශකය ඒකක 200කින් ඉහළට...",
+      excerpt:
+        "සියලු කොටස් මිල දර්ශකය ඒකක 200කින් ඉහළට ගොස් ඇති අතර ආයෝජකයින්ට මෙය අතිශය සුබදායී ආරංචියක් වේ.",
       image: "https://picsum.photos/400/250?random=36",
-      time: "පැය 7කට පෙර",
+      date: "March 11, 2026",
     },
     {
       id: 11,
       title: "ඩොලරයට සාපේක්ෂව රුපියල ශක්තිමත් වෙයි",
-      excerpt: "මහ බැංකුව විසින් නවතම විනිමය අනුපාත නිකුත් කරයි...",
+      excerpt:
+        "මහ බැංකුව විසින් නවතම විනිමය අනුපාත නිකුත් කරයි. ඒ අනුව ආර්ථිකයේ යම් ස්ථායීතාවයක් අපේක්ෂා කෙරේ.",
       image: "https://picsum.photos/400/250?random=37",
-      time: "පැය 9කට පෙර",
+      date: "March 10, 2026",
     },
   ];
+
+  // Dynamically generate 20 items to test the exact 4/8 pagination logic for Business News section
+  const businessNewsData = Array.from({ length: 20 }).map((_, i) => ({
+    ...baseBusinessNews[i % 2],
+    id: `business-news-${i + 1}`,
+  }));
+
+  // State to manage Business News card count
+  const [businessLimit, setBusinessLimit] = useState(4);
 
   return (
     <div className="flex flex-col gap-8 w-full">
@@ -247,13 +309,50 @@ const NewsFeed = () => {
 
       {/* Section 12: Business News */}
       <div>
-        <SectionHeader theme="dark-blue" title="ව්‍යාපාරික පුවත්" />
+        <SectionHeader theme="darkRed" title="ව්‍යාපාරික පුවත්" />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mb-4">
-          {businessNews.map((news) => (
+          {businessNewsData.slice(0, businessLimit).map((news) => (
             <VerticalNewsCard key={news.id} {...news} />
           ))}
         </div>
-        <LoadMoreBtn text="Load more" />
+        {businessLimit < businessNewsData.length && (
+          <LoadMoreBtn
+            text="Load more"
+            onClick={() => setBusinessLimit((prev) => prev + 4)}
+          />
+        )}
+      </div>
+
+      {/* New Section: Sports News */}
+      <div>
+        <SectionHeader theme="green" title="ක්‍රීඩා පුවත්" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mb-4">
+          {sportsNewsData.slice(0, sportsLimit).map((news) => (
+            <VerticalNewsCard key={news.id} {...news} />
+          ))}
+        </div>
+        {sportsLimit < sportsNewsData.length && (
+          <LoadMoreBtn
+            text="Load more"
+            onClick={() => setSportsLimit((prev) => prev + 4)}
+          />
+        )}
+      </div>
+
+      {/* New Section: Foreign News */}
+      <div>
+        <SectionHeader theme="blue" title="විදෙස් පුවත්" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mb-4">
+          {foreignNewsData.slice(0, foreignLimit).map((news) => (
+            <VerticalNewsCard key={news.id} {...news} />
+          ))}
+        </div>
+        {foreignLimit < foreignNewsData.length && (
+          <LoadMoreBtn
+            text="Load more"
+            onClick={() => setForeignLimit((prev) => prev + 4)}
+          />
+        )}
       </div>
     </div>
   );
