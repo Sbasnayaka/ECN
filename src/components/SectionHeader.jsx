@@ -14,9 +14,12 @@ const SectionHeader = ({ title, theme = "darkBlue", className = "" }) => {
   // Apply conditional padding and height logic for the main news variant
   const isMainNews = theme === "mainNews";
   const paddingClass = isMainNews ? "py-4 md:py-5" : "py-2";
+
+  // Shared text size class across ALL section headers to match main news size
+  const textSizeClass = "text-3xl md:text-4xl";
   const textClass = isMainNews
-    ? "text-3xl md:text-4xl font-bathala font-normal tracking-normal drop-shadow-sm"
-    : "text-2xl md:text-3xl font-kotu font-bold tracking-wide";
+    ? `${textSizeClass} font-bathala font-normal tracking-normal drop-shadow-sm`
+    : `${textSizeClass} font-kotu font-bold tracking-wide`;
 
   return (
     <div
