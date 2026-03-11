@@ -1,3 +1,4 @@
+import { useState } from "react";
 import AdBanner from "./AdBanner";
 import topAdImage from "../assets/Top Advertisement  Banner.webp";
 import videoLoopGif from "../assets/WEB-SIZE-VIDEO-LOOP.gif";
@@ -9,22 +10,33 @@ import LoadMoreBtn from "./LoadMoreBtn";
 
 const NewsFeed = () => {
   // Shared Mock Data for structural blocks
-  const hotNews = [
+  const baseHotNews = [
     {
       id: 4,
       title: "දිවයිනේ ප්‍රදේශ කිහිපයකට අදත් වැසි",
-      excerpt: "කාලගුණ විද්‍යා දෙපාර්තමේන්තුවෙන් නවතම නිවේදනයක් නිකුත් කෙරේ...",
+      excerpt:
+        "කාලගුණ විද්‍යා දෙපාර්තමේන්තුවෙන් නවතම නිවේදනයක් නිකුත් කෙරේ. බස්නාහිර, සබරගමුව සහ මධ්‍යම පළාත්වලට තද වැසි අපේක්ෂා කරන බව කාලගුණ විද්‍යා දෙපාර්තමේන්තුව අද නිවේදනය කර ඇත. අකුණු සහ ගිගුරුම් සහිත කාලගුණය පිළිබඳව ජනතාව අවධානයෙන් සිටිය යුතු බව දන්වා සිටියි.",
       image: "https://picsum.photos/400/250?random=30",
       time: "පැයකට පෙර",
     },
     {
       id: 5,
       title: "රන් මිලෙහි විශාල වෙනසක්",
-      excerpt: "ලෝක වෙළඳපොළේ රන් මිල වාර්තාගත ලෙස ඉහළ යයි...",
+      excerpt:
+        "ලෝක වෙළඳපොළේ රන් මිල වාර්තාගත ලෙස ඉහළ යයි. මේ හේතුවෙන් දේශීය වෙළඳපොළේද රන් මිල අද උදෑසන සීඝ්‍රයෙන් ඉහළ ගොස් ඇත. පාරිභෝගිකයින් මේ පිළිබඳව දැඩි අවධානයෙන් සිටින බව කොළඹ රන් වෙළඳපොල ආරංචි මාර්ග තහවුරු කරයි.",
       image: "https://picsum.photos/400/250?random=31",
       time: "පැය 3කට පෙර",
     },
   ];
+
+  // Dynamically generate 80 items to test the exact 20/40/60 pagination logic
+  const hotNewsData = Array.from({ length: 80 }).map((_, i) => ({
+    ...baseHotNews[i % 2],
+    id: `hot-news-${i + 1}`,
+  }));
+
+  // State to manage Hot News card count
+  const [hotNewsLimit, setHotNewsLimit] = useState(20);
 
   const politicsNews = [
     {
@@ -100,7 +112,7 @@ const NewsFeed = () => {
 
       {/* Section 6: Main News Section */}
       <div>
-        <SectionHeader theme="dark-blue" title="ප්‍රධාන පුවත්" />
+        <SectionHeader theme="mainNews" title="ප්‍රධාන පුවත්" />
         <div className="mt-4">
           <MainNewsSlider />
         </div>
@@ -116,11 +128,16 @@ const NewsFeed = () => {
       <div>
         <SectionHeader theme="red" title="උණුසුම් පුවත්" />
         <div className="flex flex-col gap-4 mt-4 mb-4">
-          {hotNews.map((news) => (
-            <HorizontalNewsCard key={news.id} {...news} />
+          {hotNewsData.slice(0, hotNewsLimit).map((news) => (
+            <HorizontalNewsCard key={news.id} {...news} isHotNews={true} />
           ))}
         </div>
-        <LoadMoreBtn text="Load more" />
+        {hotNewsLimit < hotNewsData.length && (
+          <LoadMoreBtn
+            text="Load more"
+            onClick={() => setHotNewsLimit((prev) => prev + 20)}
+          />
+        )}
       </div>
 
       {/* Section 9: 2 Medium Ads */}
