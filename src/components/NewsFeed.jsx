@@ -38,22 +38,62 @@ const NewsFeed = () => {
   // State to manage Hot News card count
   const [hotNewsLimit, setHotNewsLimit] = useState(20);
 
-  const politicsNews = [
+  const basePoliticsNews = [
     {
       id: 6,
       title: "පාර්ලිමේන්තුව හෙට රැස්වෙයි",
-      excerpt: "විශේෂ පනත් කිහිපයක් විවාදයට ගැනීමට නියමිතයි...",
+      excerpt:
+        "විශේෂ පනත් කිහිපයක් විවාදයට ගැනීමට නියමිතයි. මේ පිළිබඳ අවසන් තීරණය කථානායකවරයා විසින් අද ප්‍රකාශයට පත් කරනු ඇත.",
       image: "https://picsum.photos/400/250?random=32",
-      time: "පැය 2කට පෙර",
+      date: "March 10, 2026",
     },
     {
       id: 7,
       title: "නව කැබිනට් මණ්ඩලය දිවුරුම් දෙයි",
-      excerpt: "ජනාධිපති ලේකම් කාර්යාලයේදී දිවුරුම් දීම සිදුවිය...",
+      excerpt:
+        "ජනාධිපති ලේකම් කාර්යාලයේදී දිවුරුම් දීම සිදුවිය. නව අමාත්‍යවරුන් සහ ඔවුන්ගේ විෂය පථයන් අද ප්‍රකාශයට පත් කිරීමට නියමිතයි.",
       image: "https://picsum.photos/400/250?random=33",
-      time: "පැය 4කට පෙර",
+      date: "March 7, 2026",
     },
   ];
+
+  // Dynamically generate 40 items to test the exact 4/8/12 pagination logic for Politics section
+  const politicsNewsData = Array.from({ length: 40 }).map((_, i) => ({
+    ...basePoliticsNews[i % 2],
+    id: `politics-news-${i + 1}`,
+  }));
+
+  // State to manage Politics News card count
+  const [politicsLimit, setPoliticsLimit] = useState(4);
+
+  // Gossip News Mock Data Built from Politics Structure
+  const baseGossipNews = [
+    {
+      id: 20,
+      title: "මෙවර සම්මාන උළෙලේදී කැපී පෙනුණු තරු සහ ඔවුන්ගේ විලාසිතා",
+      excerpt:
+        "කලා ලොවේ ජනප්‍රිය තරු රැසක් සහභාගී වූ සම්මාන උළෙලේ විශේෂ අවස්ථා කිහිපයක් මෙසේය.",
+      image: "https://picsum.photos/400/250?random=40",
+      date: "March 9, 2026",
+    },
+    {
+      id: 21,
+      title: "ජනප්‍රිය ගායන ශිල්පියාගේ නවතම ගීතය අන්තර්ජාලය කැළඹූ අයුරු",
+      excerpt:
+        "යූටියුබ් නාලිකාව හරහා ඊයේ මුදාහළ ගීතය පැය 24ක් තුළ වාර්තාගත නැරඹුම් ප්‍රමාණයක් ලබාගෙන ඇත.",
+      image: "https://picsum.photos/400/250?random=41",
+      date: "March 8, 2026",
+    },
+  ];
+
+  // Dynamically generate 20 items to test the exact 4/8 pagination logic for Gossip section
+  const gossipNewsData = Array.from({ length: 20 }).map((_, i) => ({
+    ...baseGossipNews[i % 2],
+    id: `gossip-news-${i + 1}`,
+  }));
+
+  // State to manage Gossip News card count
+  const [gossipLimit, setGossipLimit] = useState(4);
 
   const localNews = [
     {
@@ -148,13 +188,34 @@ const NewsFeed = () => {
 
       {/* Section 10: Politics News */}
       <div>
-        <SectionHeader theme="dark-blue" title="දේශපාලන පුවත්" />
+        <SectionHeader theme="orange" title="දේශපාලන පුවත්" />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mb-4">
-          {politicsNews.map((news) => (
+          {politicsNewsData.slice(0, politicsLimit).map((news) => (
             <VerticalNewsCard key={news.id} {...news} />
           ))}
         </div>
-        <LoadMoreBtn text="Load more" />
+        {politicsLimit < politicsNewsData.length && (
+          <LoadMoreBtn
+            text="Load more"
+            onClick={() => setPoliticsLimit((prev) => prev + 4)}
+          />
+        )}
+      </div>
+
+      {/* New Section: Gossip News */}
+      <div>
+        <SectionHeader theme="pink" title="ගොසිප්" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mb-4">
+          {gossipNewsData.slice(0, gossipLimit).map((news) => (
+            <VerticalNewsCard key={news.id} {...news} />
+          ))}
+        </div>
+        {gossipLimit < gossipNewsData.length && (
+          <LoadMoreBtn
+            text="Load more"
+            onClick={() => setGossipLimit((prev) => prev + 4)}
+          />
+        )}
       </div>
 
       {/* Section 11: Local News */}
