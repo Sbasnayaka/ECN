@@ -95,22 +95,33 @@ const NewsFeed = () => {
   // State to manage Gossip News card count
   const [gossipLimit, setGossipLimit] = useState(4);
 
-  const localNews = [
+  const baseLocalNews = [
     {
       id: 8,
       title: "අධිවේගී මාර්ගයේ වාහන ගාස්තු සංශෝධනයක්",
-      excerpt: "ලබන මස සිට ක්‍රියාත්මක වන පරිදි ගාස්තු සංශෝධනයක්...",
+      excerpt:
+        "ලබන මස සිට ක්‍රියාත්මක වන පරිදි ගාස්තු සංශෝධනයක් සිදු කිරීමට අමාත්‍ය මණ්ඩලය තීරණය කර ඇත.",
       image: "https://picsum.photos/400/250?random=34",
-      time: "පැය 5කට පෙර",
+      date: "March 11, 2026",
     },
     {
       id: 9,
       title: "විශ්වවිද්‍යාල සිසුන්ගේ විරෝධතාවක්",
-      excerpt: "කොළඹ ප්‍රදේශයේ දැඩි රථවාහන තදබදයක්...",
+      excerpt:
+        "කොළඹ ප්‍රදේශයේ දැඩි රථවාහන තදබදයක් ඇති කරමින් අද දහවල් මෙම විරෝධතාව පැවැත්විණි.",
       image: "https://picsum.photos/400/250?random=35",
-      time: "පැය 6කට පෙර",
+      date: "March 10, 2026",
     },
   ];
+
+  // Dynamically generate 20 items to test the exact 4/8 pagination logic for Local News section
+  const localNewsData = Array.from({ length: 20 }).map((_, i) => ({
+    ...baseLocalNews[i % 2],
+    id: `local-news-${i + 1}`,
+  }));
+
+  // State to manage Local News card count
+  const [localLimit, setLocalLimit] = useState(4);
 
   const businessNews = [
     {
@@ -220,13 +231,18 @@ const NewsFeed = () => {
 
       {/* Section 11: Local News */}
       <div>
-        <SectionHeader theme="dark-blue" title="දේශීය පුවත්" />
+        <SectionHeader theme="cyan" title="දේශීය පුවත්" />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mb-4">
-          {localNews.map((news) => (
+          {localNewsData.slice(0, localLimit).map((news) => (
             <VerticalNewsCard key={news.id} {...news} />
           ))}
         </div>
-        <LoadMoreBtn text="Load more" />
+        {localLimit < localNewsData.length && (
+          <LoadMoreBtn
+            text="Load more"
+            onClick={() => setLocalLimit((prev) => prev + 4)}
+          />
+        )}
       </div>
 
       {/* Section 12: Business News */}

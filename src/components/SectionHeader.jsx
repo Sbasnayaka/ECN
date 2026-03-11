@@ -9,6 +9,7 @@ const SectionHeader = ({ title, theme = "darkBlue", className = "" }) => {
     mainNews: "bg-[#0b5ed7] border-[#0a58ca]", // Matched from Dasatha Lanka reference
     orange: "bg-[#f97316] border-[#ea580c]", // Politics section custom orange
     pink: "bg-[#FF69B4] border-[#d81b60]", // Gossip section custom pink
+    cyan: "bg-[#00B6DC] border-[#0096B4]", // Local News custom cyan
   };
 
   const appliedTheme = themeClasses[theme] || themeClasses.darkBlue;
