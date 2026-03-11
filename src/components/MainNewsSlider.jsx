@@ -58,7 +58,7 @@ const MainNewsSlider = () => {
   }, [slides.length]);
 
   return (
-    <div className="relative w-full h-[400px] sm:h-[450px] md:h-[500px] overflow-hidden group">
+    <div className="relative w-full h-[300px] sm:h-[350px] md:h-[400px] overflow-hidden group">
       {/* Slider Images and Content */}
       <div
         className="flex h-full transition-transform duration-700 ease-out"
