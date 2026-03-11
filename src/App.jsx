@@ -10,6 +10,8 @@ import ArticlePage from "./pages/ArticlePage";
 import AboutPage from "./pages/AboutPage";
 import AdvertisingPage from "./pages/AdvertisingPage";
 
+import topBannerImg from "./assets/Top Banner - Header Section.webp";
+
 const Home = () => (
   <div className="w-full">
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -42,6 +44,18 @@ function App() {
         <div className="w-full max-w-[1280px] bg-white flex flex-col shadow-2xl min-h-screen overflow-hidden">
           <Navigation />
           <NewsTicker />
+
+          {/* Top Banner - Header Section (Client Requested) */}
+          <div className="w-full pt-6 md:pt-8 bg-white">
+            <div className="max-w-7xl mx-auto px-4">
+              <img
+                src={topBannerImg}
+                alt="ECN Top Banner"
+                className="w-full h-auto object-contain rounded shadow-sm border border-gray-100"
+              />
+            </div>
+          </div>
+
           <main className="flex-grow">
             <Routes>
               <Route path="/" element={<Home />} />
