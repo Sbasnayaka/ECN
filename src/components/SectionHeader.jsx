@@ -15,6 +15,8 @@ const SectionHeader = ({ title, theme = "darkBlue", className = "" }) => {
     blue: "bg-[#0F52BA] border-[#0c449c]", // Foreign News custom blue
     purple: "bg-[#8A2BE2] border-[#B68EE6]", // Gallery component custom purple
     goldenAmber: "bg-[#A17015] border-[#8a5e10]", // Gossip sidebar section
+    lightGreen: "bg-[#53AB4A] border-[#428a3a]", // සුව දිවිය sidebar section
+    brownGold: "bg-[#BF8931] border-[#a0731f]", // රූසර sidebar section
   };
 
   const appliedTheme = themeClasses[theme] || themeClasses.darkBlue;
