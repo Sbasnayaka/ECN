@@ -68,6 +68,8 @@ const RightSidebar = () => {
     id: `popular-news-${i + 1}`,
   }));
 
+  const [popularLimit, setPopularLimit] = useState(8);
+
   // සුව දිවිය (Health) Data
   const baseSuwaDiviNews = [
     {
@@ -171,28 +173,41 @@ const RightSidebar = () => {
       {/* Section 16: Medium Advertisement Banner 05 */}
       <AdBanner title="Medium advertisement Banner 05" size="medium" />
 
-      {/* Section 17: ජනප්‍රිය පුවත් - image + title only */}
+      {/* Section 17: ජනප්‍රිය පුවත් - horizontal thumbnail + title layout */}
       <div className="flex flex-col bg-white border border-gray-100 shadow-sm">
-        <SectionHeader title="ජනප්‍රිය පුවත්" theme="grey" />
-        <div className="flex flex-col gap-4 p-4">
-          {popularNewsData.map((article) => (
-            <div key={article.id} className="group cursor-pointer">
-              <div className="overflow-hidden mb-2">
+        <SectionHeader title="ජනප්‍රිය පුවත්" theme="violet" />
+        <div className="flex flex-col">
+          {popularNewsData.slice(0, popularLimit).map((article) => (
+            <div
+              key={article.id}
+              className="group cursor-pointer flex flex-row gap-3 px-3 py-3 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors"
+            >
+              {/* Small left thumbnail */}
+              <div className="flex-shrink-0 w-32 h-28 overflow-hidden">
                 <img
                   src={article.image}
                   alt={article.title}
-                  className="w-full h-32 object-cover bg-gray-200 group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover bg-gray-200 group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
-              <h3 className="font-raum font-bold text-sm md:text-base leading-snug text-ecn-black group-hover:text-blue-700 transition-colors line-clamp-2">
-                {article.title}
-              </h3>
-              <span className="text-xs font-bold text-gray-500 mt-1 block">
-                {article.date}
-              </span>
+              {/* Title and date stacked right */}
+              <div className="flex flex-col gap-1 flex-1 min-w-0">
+                <h3 className="font-raum font-bold text-lg md:text-xl leading-snug text-ecn-black group-hover:text-blue-700 transition-colors line-clamp-3">
+                  {article.title}
+                </h3>
+                <span className="text-xs font-bold text-gray-500 block">
+                  {article.date}
+                </span>
+              </div>
             </div>
           ))}
         </div>
+        {popularLimit < popularNewsData.length && (
+          <LoadMoreBtn
+            onClick={() => setPopularLimit((prev) => prev + 8)}
+            text="Load more"
+          />
+        )}
       </div>
 
       {/* Section 18: සුව දිවිය */}
