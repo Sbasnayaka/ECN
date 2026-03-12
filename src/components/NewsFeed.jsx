@@ -66,35 +66,6 @@ const NewsFeed = () => {
   // State to manage Politics News card count
   const [politicsLimit, setPoliticsLimit] = useState(4);
 
-  // Gossip News Mock Data Built from Politics Structure
-  const baseGossipNews = [
-    {
-      id: 20,
-      title: "මෙවර සම්මාන උළෙලේදී කැපී පෙනුණු තරු සහ ඔවුන්ගේ විලාසිතා",
-      excerpt:
-        "කලා ලොවේ ජනප්‍රිය තරු රැසක් සහභාගී වූ සම්මාන උළෙලේ විශේෂ අවස්ථා කිහිපයක් මෙසේය.",
-      image: "https://picsum.photos/400/250?random=40",
-      date: "March 9, 2026",
-    },
-    {
-      id: 21,
-      title: "ජනප්‍රිය ගායන ශිල්පියාගේ නවතම ගීතය අන්තර්ජාලය කැළඹූ අයුරු",
-      excerpt:
-        "යූටියුබ් නාලිකාව හරහා ඊයේ මුදාහළ ගීතය පැය 24ක් තුළ වාර්තාගත නැරඹුම් ප්‍රමාණයක් ලබාගෙන ඇත.",
-      image: "https://picsum.photos/400/250?random=41",
-      date: "March 8, 2026",
-    },
-  ];
-
-  // Dynamically generate 20 items to test the exact 4/8 pagination logic for Gossip section
-  const gossipNewsData = Array.from({ length: 20 }).map((_, i) => ({
-    ...baseGossipNews[i % 2],
-    id: `gossip-news-${i + 1}`,
-  }));
-
-  // State to manage Gossip News card count
-  const [gossipLimit, setGossipLimit] = useState(4);
-
   const baseLocalNews = [
     {
       id: 8,
@@ -271,22 +242,6 @@ const NewsFeed = () => {
           <LoadMoreBtn
             text="Load more"
             onClick={() => setPoliticsLimit((prev) => prev + 4)}
-          />
-        )}
-      </div>
-
-      {/* New Section: Gossip News */}
-      <div>
-        <SectionHeader theme="pink" title="ගොසිප්" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mb-4">
-          {gossipNewsData.slice(0, gossipLimit).map((news) => (
-            <VerticalNewsCard key={news.id} {...news} />
-          ))}
-        </div>
-        {gossipLimit < gossipNewsData.length && (
-          <LoadMoreBtn
-            text="Load more"
-            onClick={() => setGossipLimit((prev) => prev + 4)}
           />
         )}
       </div>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import SectionHeader from "./SectionHeader";
 import VerticalNewsCard from "./VerticalNewsCard";
 import HorizontalNewsCard from "./HorizontalNewsCard";
@@ -8,19 +8,32 @@ import AdBanner from "./AdBanner";
 import ytIcon from "../assets/icons/youtube.png";
 
 const RightSidebar = () => {
-  // Mock Data for the sidebar sections
-  const societyGossips = [
+  // Gossip News Data for Sidebar
+  const baseGossipNews = [
     {
-      id: 201,
+      id: 301,
       title: "මෙවර සම්මාන උළෙලේදී කැපී පෙනුණු තරු සහ ඔවුන්ගේ විලාසිතා",
-      date: "2026-03-09",
+      excerpt:
+        "කලා ලොවේ ජනප්‍රිය තරු රැසක් සහභාගී වූ සම්මාන උළෙලේ විශේෂ අවස්ථා.",
+      image: "https://picsum.photos/400/250?random=40",
+      date: "March 9, 2026",
     },
     {
-      id: 202,
+      id: 302,
       title: "ජනප්‍රිය ගායන ශිල්පියාගේ නවතම ගීතය අන්තර්ජාලය කැළඹූ අයුරු",
-      date: "2026-03-08",
+      excerpt:
+        "යූටියුබ් නාලිකාව හරහා ඊයේ මුදාහළ ගීතය පැය 24ක් තුළ වාර්තාගත නැරඹුම් ප්‍රමාණයක් ලබාගෙන ඇත.",
+      image: "https://picsum.photos/400/250?random=41",
+      date: "March 8, 2026",
     },
   ];
+
+  const gossipData = Array.from({ length: 32 }).map((_, i) => ({
+    ...baseGossipNews[i % 2],
+    id: `sidebar-gossip-${i + 1}`,
+  }));
+
+  const [gossipLimit, setGossipLimit] = useState(8);
 
   const otherNews = [
     {
@@ -82,23 +95,27 @@ const RightSidebar = () => {
         </a>
       </div>
 
-      {/* Section 15: Society Gossips */}
+      {/* Section 15: ගොසිප් */}
       <div className="flex flex-col bg-white border border-gray-100 shadow-sm">
-        <SectionHeader title="society gossips" theme="grey" />
-        <div className="p-4 flex flex-col gap-6">
-          {societyGossips.map((article) => (
+        <SectionHeader title="ගොසිප්" theme="goldenAmber" />
+        <div className="flex flex-col gap-4 p-4">
+          {gossipData.slice(0, gossipLimit).map((article) => (
             <VerticalNewsCard
               key={article.id}
               id={article.id}
               title={article.title}
+              excerpt={article.excerpt}
+              image={article.image}
               date={article.date}
             />
           ))}
         </div>
-        <LoadMoreBtn
-          onClick={() => console.log("load gossips")}
-          text="Load more"
-        />
+        {gossipLimit < gossipData.length && (
+          <LoadMoreBtn
+            onClick={() => setGossipLimit((prev) => prev + 8)}
+            text="Load more"
+          />
+        )}
       </div>
 
       {/* Section 16: Medium Advertisement Banner 05 */}
