@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import RightSidebar from "../components/RightSidebar";
+import adBannerImg from "../assets/Top Advertisement  Banner.webp";
+import bottomBannerImg from "../assets/single page advertisement bottom banner.jpg";
 
 const ArticlePage = () => {
   // useParams allows us to get the :id from the URL (e.g. /article/123 -> id is "123")
@@ -18,8 +20,7 @@ const ArticlePage = () => {
     category: "ව්‍යාපාරික",
     author: "ප්‍රවෘත්ති අංශය",
     publishedAt: "2023-11-20 | පෙ.ව. 10:30",
-    imageUrl:
-      "https://via.placeholder.com/800x400/112240/ffffff?text=Full+Article+Image",
+    imageUrl: "https://picsum.photos/800/400?random=55",
     content: `
             මෙරට ආර්ථිකය ශක්තිමත් කිරීමේ අරමුණින් රජය විසින් නවතම ආර්ථික ප්‍රතිසංස්කරණ ක්‍රියාවලියක් හඳුන්වා දී ඇත. මෙම වැඩපිළිවෙළ යටතේ අපනයන කර්මාන්ත දිරිගැන්වීම සහ දේශීය නිෂ්පාදන ඉහළ නැංවීම සඳහා විශේෂ අවධානයක් යොමු කර තිබේ.
             
@@ -53,6 +54,12 @@ const ArticlePage = () => {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Column: Full Article Reading Area */}
           <div className="lg:w-2/3 flex flex-col gap-6">
+            {/* Top Advertisement Banners — 3-column grid, main content area only */}
+            <div className="w-full grid grid-cols-3 gap-3">
+              <img src={adBannerImg} alt="Advertisement Banner 1" className="w-full h-auto object-contain shadow-sm" />
+              <img src={adBannerImg} alt="Advertisement Banner 2" className="w-full h-auto object-contain shadow-sm" />
+              <img src={adBannerImg} alt="Advertisement Banner 3" className="w-full h-auto object-contain shadow-sm" />
+            </div>
             {/* Main Article Card */}
             <div className="bg-white p-5 md:p-8 shadow-sm border border-gray-100 rounded-lg">
               {/* Article Header */}
@@ -97,12 +104,12 @@ const ArticlePage = () => {
               </div>
 
               {/* Article Body Content */}
-              <div className="max-w-none text-gray-800 font-medium">
-                {/* Rendering paragraphs with clean, modern CSS. NO DROP CAP. */}
+              <div className="max-w-none text-gray-800">
+                {/* 16px / weight 400 / left-aligned — as per client spec */}
                 {articleInfo.content.split("\n\n").map((paragraph, index) => (
                   <p
                     key={index}
-                    className="mb-5 text-[16px] md:text-[18px] leading-[1.8] text-justify text-gray-700"
+                    className="mb-5 text-[16px] leading-[1.8] text-left font-normal text-gray-700"
                   >
                     {paragraph.trim()}
                   </p>
@@ -164,46 +171,50 @@ const ArticlePage = () => {
               </div>
             </div>
 
+            {/* Bottom Advertisement Banner — after Reaction + Share section */}
+            <div className="w-full mt-4 mb-2 overflow-hidden">
+              <img
+                src={bottomBannerImg}
+                alt="Advertisement"
+                className="w-full max-h-28 object-cover"
+              />
+            </div>
+
             {/* Related News Section */}
-            <div className="mt-4">
-              <h3 className="text-xl font-bold border-b-2 border-ecn-navy pb-2 mb-4">
-                <span className="bg-ecn-navy text-white px-4 py-1 inline-block">
-                  සම්බන්ධිත පුවත් (Related)
-                </span>
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Mock Related Card 1 */}
-                <div className="bg-white border border-gray-100 rounded overflow-hidden shadow-sm hover:shadow-md transition">
-                  <img
-                    src="https://via.placeholder.com/400x250/112240/ffffff?text=Related+News+1"
-                    className="w-full h-32 object-cover"
-                    alt="Related"
-                  />
-                  <div className="p-3">
-                    <h4 className="font-bold text-sm leading-snug hover:text-blue-600 cursor-pointer text-ecn-dark-blue">
-                      මහ බැංකුවෙන් නව වාර්තාවක් නිකුත් කෙරේ
-                    </h4>
-                    <span className="text-xs text-gray-400 mt-2 block">
-                      පැය 2කට පෙර
-                    </span>
+            <div className="mt-6">
+              {/* Section heading — styled like a SectionHeader */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1.5 h-8 bg-ecn-navy rounded-full shrink-0" />
+                <h3 className="text-2xl md:text-3xl font-black text-ecn-dark-blue font-raum">
+                  සම්බන්ධිත පුවත්
+                </h3>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {Array.from({ length: 15 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 group cursor-pointer"
+                  >
+                    <div className="overflow-hidden">
+                      <img
+                        src={`https://picsum.photos/600/350?random=${200 + index}`}
+                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+                        alt={`Related news ${index + 1}`}
+                      />
+                    </div>
+                    <div className="p-4">
+                      <span className="inline-block bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wide mb-2">
+                        සම්බන්ධිත
+                      </span>
+                      <h4 className="font-raum font-bold text-base md:text-lg leading-snug group-hover:text-blue-700 transition-colors text-ecn-dark-blue line-clamp-2 mb-2">
+                        සම්බන්ධිත පුවත් {index + 1} — ශ්‍රී ලංකාවේ නවතම ආර්ථික ප්‍රතිසංස්කරණ
+                      </h4>
+                      <span className="text-xs font-bold text-gray-400 block">
+                        🕒 පැය {index + 1}කට පෙර
+                      </span>
+                    </div>
                   </div>
-                </div>
-                {/* Mock Related Card 2 */}
-                <div className="bg-white border border-gray-100 rounded overflow-hidden shadow-sm hover:shadow-md transition">
-                  <img
-                    src="https://via.placeholder.com/400x250/112240/ffffff?text=Related+News+2"
-                    className="w-full h-32 object-cover"
-                    alt="Related"
-                  />
-                  <div className="p-3">
-                    <h4 className="font-bold text-sm leading-snug hover:text-blue-600 cursor-pointer text-ecn-dark-blue">
-                      කොටස් වෙළෙඳපොළ මිල දර්ශක ඉහළට
-                    </h4>
-                    <span className="text-xs text-gray-400 mt-2 block">
-                      පැය 4කට පෙර
-                    </span>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
