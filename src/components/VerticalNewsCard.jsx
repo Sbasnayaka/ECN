@@ -6,9 +6,21 @@ const VerticalNewsCard = ({
   image,
   title,
   date,
+  time,
   excerpt,
   showReadMore = false,
 }) => {
+  const displayDate = date || time;
+  // Truncate excerpt to precisely 10 words
+  const getExcerpt = (text) => {
+    if (!text) return "";
+    const words = text.split(" ");
+    if (words.length > 10) {
+      return words.slice(0, 10).join(" ") + "...";
+    }
+    return text;
+  };
+
   return (
     <div className="flex flex-col bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow group h-full">
       {/* Image Section */}
@@ -19,28 +31,29 @@ const VerticalNewsCard = ({
             "https://via.placeholder.com/400x250/e0e0e0/888888?text=news+image"
           }
           alt={title}
-          className="w-full h-48 md:h-56 object-cover bg-gray-200 group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-32 md:h-40 object-cover bg-gray-200 group-hover:scale-105 transition-transform duration-500"
         />
       </Link>
 
       {/* Content Section */}
       <div className="p-4 flex flex-col flex-1">
         <Link to={`/article/${id}`}>
-          <h3 className="font-kotu font-bold text-lg leading-snug text-ecn-black group-hover:text-blue-700 transition-colors line-clamp-2">
+          <h3 className="font-raum font-bold text-xl md:text-2xl leading-snug text-ecn-black group-hover:text-blue-700 transition-colors line-clamp-2 mb-2">
             {title}
           </h3>
         </Link>
 
-        {date && (
-          <span className="text-gray-400 text-xs mt-2 mb-2 font-medium">
-            {date}
-          </span>
+        {excerpt && (
+          <p className="text-gray-600 text-[13px] sm:text-sm leading-relaxed mb-3">
+            {getExcerpt(excerpt)}
+          </p>
         )}
 
-        {excerpt && (
-          <p className="text-gray-600 text-sm line-clamp-3 mb-4 font-noto">
-            {excerpt}
-          </p>
+        {/* Date shifted under description as client requested */}
+        {displayDate && (
+          <span className="text-gray-500 text-xs font-bold mt-auto">
+            {displayDate}
+          </span>
         )}
 
         {/* Optional Read More Button (specifically requested in Hot News section Figma design) */}

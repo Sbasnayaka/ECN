@@ -49,7 +49,7 @@ const Navigation = () => {
     <header className="sticky top-0 z-50 shadow-md">
       {/* Top Sub-Bar (Date, Time, Weather, Contact Us) - Darkest Blue */}
       <div className="bg-[#000061] text-xs sm:text-sm text-gray-300 py-3 w-full border-b border-[#000080]/30">
-        <div className="max-w-[1400px] mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div className="max-w-[1200px] mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
           {/* Left: Date & Time Pill Shapes */}
           <div className="flex items-center gap-3">
             <div className="flex items-center border border-[#000080] rounded px-4 py-1.5 bg-transparent">
@@ -82,7 +82,7 @@ const Navigation = () => {
 
       {/* Main Navigation Bar - Primary Navy Blue */}
       <div className="bg-[#000080] w-full text-white">
-        <div className="max-w-[1400px] mx-auto px-4 flex flex-col md:flex-row items-center py-2 h-auto md:h-16">
+        <div className="max-w-[1200px] mx-auto px-4 flex flex-col md:flex-row items-center py-2 h-auto md:h-16">
           {/* Logo Box */}
           <Link
             to="/"
@@ -96,12 +96,12 @@ const Navigation = () => {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="flex flex-wrap items-center justify-center md:justify-end gap-x-2 gap-y-2 flex-1">
+          <nav className="flex flex-nowrap overflow-x-auto items-center justify-start md:justify-end gap-x-1 lg:gap-x-2 flex-1 w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className="px-3 py-1.5 text-sm lg:text-base font-bold transition-all duration-200 whitespace-nowrap rounded hover:bg-[#000061] hover:text-blue-200"
+                className="px-2 lg:px-2.5 py-1.5 text-[13px] lg:text-[14.5px] font-bold transition-all duration-200 whitespace-nowrap rounded hover:bg-[#000061] hover:text-blue-200 text-center"
               >
                 {link.name}
               </Link>

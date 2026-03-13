@@ -14,7 +14,7 @@ import topBannerImg from "./assets/Top Banner - Header Section.webp";
 
 const Home = () => (
   <div className="w-full">
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-[1200px] mx-auto px-4 py-8">
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Left Column: Main News Feed */}
         <div className="lg:w-2/3">
@@ -41,13 +41,13 @@ function App() {
       {/* Outer gray background bounding the whole viewport */}
       <div className="min-h-screen flex justify-center bg-gray-200 text-ecn-black">
         {/* Inner white centered container that mimics the Dasatha Lanka layout box */}
-        <div className="w-full max-w-[1280px] bg-white flex flex-col shadow-2xl min-h-screen overflow-hidden">
+        <div className="w-full max-w-[1200px] bg-white flex flex-col shadow-2xl min-h-screen overflow-hidden">
           <Navigation />
           <NewsTicker />
 
           {/* Top Banner - Header Section (Client Requested) */}
           <div className="w-full pt-6 md:pt-8 bg-white">
-            <div className="max-w-7xl mx-auto px-4">
+            <div className="max-w-[1200px] mx-auto px-4">
               <img
                 src={topBannerImg}
                 alt="ECN Top Banner"
