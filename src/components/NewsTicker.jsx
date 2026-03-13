@@ -14,7 +14,7 @@ const NewsTicker = () => {
       {/* Label - Red Section */}
       <div className="bg-red-700 text-white px-4 py-2 font-bold whitespace-nowrap z-10 flex items-center shrink-0">
         <span className="animate-pulse mr-2 h-2.5 w-2.5 bg-yellow-300 rounded-full"></span>
-        <span className="md:text-lg">උණුසුම් පුවත්</span>
+        <span className="md:text-lg">උණුසුම් <span className="hidden sm:inline">පුවත්</span></span>
       </div>
 
       {/* Scrolling Gold Marquee Section */}

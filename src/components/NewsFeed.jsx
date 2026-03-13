@@ -176,7 +176,7 @@ const NewsFeed = () => {
   return (
     <div className="flex flex-col gap-8 w-full">
       {/* Section 4: 3 Small Ads */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         <AdBanner size="small" image={topAdImage} />
         <AdBanner size="small" image={topAdImage} />
         <AdBanner size="small" image={topAdImage} />
@@ -203,7 +203,7 @@ const NewsFeed = () => {
       </div>
 
       {/* Section 7: 2 Medium Ads */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <AdBanner size="medium" />
         <AdBanner size="medium" />
       </div>
@@ -225,7 +225,7 @@ const NewsFeed = () => {
       </div>
 
       {/* Section 9: 2 Medium Ads */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <AdBanner size="medium" />
         <AdBanner size="medium" />
       </div>

@@ -55,10 +55,10 @@ const ArticlePage = () => {
           {/* Left Column: Full Article Reading Area */}
           <div className="lg:w-2/3 flex flex-col gap-6">
             {/* Top Advertisement Banners — 3-column grid, main content area only */}
-            <div className="w-full grid grid-cols-3 gap-3">
-              <img src={adBannerImg} alt="Advertisement Banner 1" className="w-full h-auto object-contain shadow-sm" />
-              <img src={adBannerImg} alt="Advertisement Banner 2" className="w-full h-auto object-contain shadow-sm" />
-              <img src={adBannerImg} alt="Advertisement Banner 3" className="w-full h-auto object-contain shadow-sm" />
+            <div className="w-full grid grid-cols-3 gap-1 sm:gap-3 mb-2">
+              <img src={adBannerImg} alt="Advertisement Banner 1" className="w-full h-auto object-contain shadow-sm rounded-sm" />
+              <img src={adBannerImg} alt="Advertisement Banner 2" className="w-full h-auto object-contain shadow-sm rounded-sm" />
+              <img src={adBannerImg} alt="Advertisement Banner 3" className="w-full h-auto object-contain shadow-sm rounded-sm" />
             </div>
             {/* Main Article Card */}
             <div className="bg-white p-5 md:p-8 shadow-sm border border-gray-100 rounded-lg">
