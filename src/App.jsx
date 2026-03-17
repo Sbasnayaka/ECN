@@ -9,8 +9,16 @@ import CategoryPage from "./pages/CategoryPage";
 import ArticlePage from "./pages/ArticlePage";
 import AboutPage from "./pages/AboutPage";
 import AdvertisingPage from "./pages/AdvertisingPage";
-
+import Login from './pages/Login';
 import topBannerImg from "./assets/Top Banner - Header Section.webp";
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminLayout from './admin/AdminLayout';
+import AdminDashboard from './admin/Dashboard';
+// We'll create these later, but add imports for them now (they can be placeholders)
+import Categories from './admin/Categories';
+import Articles from './admin/Articles';
+import Ads from './admin/Ads';
+import GalleryAdmin from './admin/Gallery';
 
 const Home = () => (
   <div className="w-full">
@@ -141,6 +149,18 @@ function App() {
                   />
                 }
               />
+              <Route path="/login" element={<Login />} />
+              <Route path="/admin" element={
+                <ProtectedRoute>
+                  <AdminLayout />
+                </ProtectedRoute>
+              }>
+                <Route index element={<AdminDashboard />} />
+                <Route path="categories" element={<Categories />} />
+                <Route path="articles" element={<Articles />} />
+                <Route path="ads" element={<Ads />} />
+                <Route path="gallery" element={<GalleryAdmin />} />
+              </Route>
 
               {/* Static Content Routes */}
               <Route path="/advertising" element={<AdvertisingPage />} />

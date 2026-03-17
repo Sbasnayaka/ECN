@@ -1,0 +1,22 @@
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+const ProtectedRoute = ({ children, allowedRoles = ['admin', 'editor'] }) => {
+  const { user, profile, loading } = useAuth();
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!profile || !allowedRoles.includes(profile.role)) {
+    return <Navigate to="/" replace />; // or a 403 page
+  }
+
+  return children;
+};
+
+export default ProtectedRoute;
