@@ -11,9 +11,10 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Check active session
         const getSession = async () => {
+            console.log('Fetching session...');
             const { data: { session } } = await supabase.auth.getSession();
+            console.log('Session:', session);
             if (session?.user) {
                 setUser(session.user);
                 await fetchProfile(session.user.id);
@@ -23,8 +24,8 @@ export const AuthProvider = ({ children }) => {
 
         getSession();
 
-        // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+            console.log('Auth state changed:', _event, session);
             if (session?.user) {
                 setUser(session.user);
                 await fetchProfile(session.user.id);
@@ -38,16 +39,22 @@ export const AuthProvider = ({ children }) => {
         return () => subscription.unsubscribe();
     }, []);
 
-    const fetchProfile = async (userId) => {
-        const { data, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', userId)
-            .single();
-        if (!error && data) {
-            setProfile(data);
-        }
-    };
+  const fetchProfile = async (userId) => {
+  console.log('Fetching profile for:', userId);
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId);
+  console.log('Raw query result:', { data, error });
+  if (error) {
+    console.error('Profile fetch error:', error);
+    setProfile(null);
+  } else if (data && data.length > 0) {
+    setProfile(data[0]);
+  } else {
+    setProfile(null);
+  }
+};
 
     const login = async (email, password) => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -70,3 +77,4 @@ export const AuthProvider = ({ children }) => {
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+

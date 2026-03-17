@@ -120,12 +120,12 @@ const Navigation = () => {
             </button>
 
             {/* Desktop Navigation Links (Hidden on mobile) */}
-            <nav className="hidden md:flex flex-wrap items-center justify-end gap-x-2 gap-y-2 flex-1">
+            <nav className="hidden md:flex flex-nowrap items-center justify-end gap-x-1.5 flex-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  className="px-3 py-1.5 text-sm lg:text-base font-bold transition-all duration-200 whitespace-nowrap rounded hover:bg-[#000061] hover:text-blue-200"
+                  className="px-2 py-1.5 text-sm lg:text-[15px] font-bold transition-all duration-200 whitespace-nowrap rounded hover:bg-[#000061] hover:text-blue-200"
                 >
                   {link.name}
                 </Link>
