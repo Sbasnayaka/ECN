@@ -162,7 +162,12 @@ function App() {
                   </ProtectedRoute>
                 } />
                 <Route path="articles" element={<Articles />} />
-                <Route path="ads" element={<Ads />} />
+                <Route path="ads" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <Ads />
+                  </ProtectedRoute>
+                } />
+
                 <Route path="gallery" element={<GalleryAdmin />} />
                 {/* Mention: Keeping this if you still need it */}
                 <Route path="test-upload" element={<TestUpload />} />
