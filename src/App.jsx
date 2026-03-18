@@ -14,11 +14,11 @@ import topBannerImg from "./assets/Top Banner - Header Section.webp";
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminLayout from './admin/AdminLayout';
 import AdminDashboard from './admin/Dashboard';
-// We'll create these later, but add imports for them now (they can be placeholders)
 import Categories from './admin/Categories';
 import Articles from './admin/Articles';
 import Ads from './admin/Ads';
 import GalleryAdmin from './admin/Gallery';
+import TestUpload from './components/TestUpload';
 
 const Home = () => (
   <div className="w-full">
@@ -149,28 +149,37 @@ function App() {
                   />
                 }
               />
-              <Route path="/login" element={<Login />} />
+              <Route path="/login" element={<Login />} />             
               <Route path="/admin" element={
                 <ProtectedRoute>
                   <AdminLayout />
                 </ProtectedRoute>
               }>
                 <Route index element={<AdminDashboard />} />
-                <Route path="categories" element={<Categories />} />
+                <Route path="categories" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <Categories />
+                  </ProtectedRoute>
+                } />
                 <Route path="articles" element={<Articles />} />
                 <Route path="ads" element={<Ads />} />
                 <Route path="gallery" element={<GalleryAdmin />} />
+                {/* Mention: Keeping this if you still need it */}
+                <Route path="test-upload" element={<TestUpload />} />
               </Route>
+
 
               {/* Static Content Routes */}
               <Route path="/advertising" element={<AdvertisingPage />} />
               <Route path="/about" element={<AboutPage />} />
             </Routes>
+            
           </main>
           <Footer />
         </div>
       </div>
     </Router>
+    
   );
 }
 
