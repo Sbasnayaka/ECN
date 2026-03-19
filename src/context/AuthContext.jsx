@@ -62,8 +62,20 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = async () => {
-        await supabase.auth.signOut();
-    };
+  try {
+    console.log('Logging out...');
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Logout error:', error);
+      throw error;
+    }
+    console.log('Logout successful');
+  } catch (err) {
+    console.error('Logout exception:', err);
+    // Optionally show an alert to the user
+    alert('Logout failed. Please try again.');
+  }
+};
 
     const value = {
         user,
