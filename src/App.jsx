@@ -161,7 +161,12 @@ function App() {
                     <Categories />
                   </ProtectedRoute>
                 } />
-                <Route path="articles" element={<Articles />} />
+                <Route path="articles" element={
+                  <ProtectedRoute allowedRoles={['admin', 'editor']}>
+                    <Articles />
+                  </ProtectedRoute>
+                } />
+
                 <Route path="ads" element={
                   <ProtectedRoute allowedRoles={['admin']}>
                     <Ads />
