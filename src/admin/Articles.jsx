@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react';
-import { getArticles, createArticle, updateArticle, deleteArticle, getCategories, getAuthors } from '../api/articleService';
-//import { getArticles, deleteArticle, getCategories, getAuthors } from '../api/articleService';
+import { 
+  getArticles, 
+  createArticle, 
+  updateArticle, 
+  deleteArticle, 
+  getCategories, 
+  getAuthors,
+  approveArticle,
+  requestArticleDelete 
+} from '../api/articleService';
 import ArticleForm from './ArticleForm';
 import { useAuth } from '../context/AuthContext';
 
@@ -12,6 +20,7 @@ const Articles = () => {
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingArticle, setEditingArticle] = useState(null);
+  const [statusFilter, setStatusFilter] = useState('all'); 
   const { profile } = useAuth();
 
   const isAdmin = profile?.role === 'admin';
@@ -19,13 +28,13 @@ const Articles = () => {
 
   useEffect(() => {
     fetchAllData();
-  }, []);
+  }, [statusFilter]);
 
   const fetchAllData = async () => {
     try {
       setLoading(true);
       const [articlesData, categoriesData, authorsData] = await Promise.all([
-        getArticles(),
+        getArticles(), // we'll filter client-side for simplicity
         getCategories(),
         getAuthors(),
       ]);
@@ -38,6 +47,43 @@ const Articles = () => {
       setError('Failed to load articles.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const filteredArticles = articles.filter(article => {
+    if (statusFilter === 'all') return true;
+    return article.status === statusFilter;
+  });
+
+  const handleApprove = async (id) => {
+    try {
+      await approveArticle(id);
+      fetchAllData();
+    } catch (err) {
+      console.error('Error approving article:', err);
+      alert('Failed to approve article.');
+    }
+  };
+
+  const handleRequestDelete = async (id) => {
+    if (!window.confirm('Request deletion of this article? Admins will need to approve.')) return;
+    try {
+      await requestArticleDelete(id);
+      fetchAllData();
+    } catch (err) {
+      console.error('Error requesting delete:', err);
+      alert('Failed to request deletion.');
+    }
+  };
+
+  const handleAdminDelete = async (id) => {
+    if (!window.confirm('Permanently delete this article?')) return;
+    try {
+      await deleteArticle(id);
+      fetchAllData();
+    } catch (err) {
+      console.error('Error deleting article:', err);
+      alert('Failed to delete.');
     }
   };
 
@@ -87,25 +133,51 @@ const Articles = () => {
       draft: 'bg-gray-100 text-gray-800',
       pending: 'bg-yellow-100 text-yellow-800',
       published: 'bg-green-100 text-green-800',
+      delete_requested: 'bg-red-100 text-red-800',
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
 
-  if (loading) return <div className="text-center py-8">Loading articles...</div>;
-  if (error) return <div className="text-red-600 py-8">{error}</div>;
-
   return (
     <div>
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Articles Management</h1>
         {(isAdmin || isEditor) && (
-          <button
-            onClick={handleCreate}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
+          <button onClick={handleCreate} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
             + Create New Article
           </button>
         )}
+      </div>
+
+      {/* Status Filter Tabs */}
+      <div className="mb-6 border-b border-gray-200">
+        <nav className="-mb-px flex space-x-8">
+          <button
+            onClick={() => setStatusFilter('all')}
+            className={`pb-2 px-1 ${statusFilter === 'all' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            All
+          </button>
+          <button
+            onClick={() => setStatusFilter('pending')}
+            className={`pb-2 px-1 ${statusFilter === 'pending' ? 'border-b-2 border-yellow-500 text-yellow-600' : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            Pending
+          </button>
+          <button
+            onClick={() => setStatusFilter('published')}
+            className={`pb-2 px-1 ${statusFilter === 'published' ? 'border-b-2 border-green-500 text-green-600' : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            Published
+          </button>
+          <button
+            onClick={() => setStatusFilter('delete_requested')}
+            className={`pb-2 px-1 ${statusFilter === 'delete_requested' ? 'border-b-2 border-red-500 text-red-600' : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            Delete Requests
+          </button>
+        </nav>
       </div>
 
       {showForm && (
@@ -131,11 +203,11 @@ const Articles = () => {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hot</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Featured</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              {(isAdmin || isEditor) && <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>}
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {articles.map((article) => (
+            {filteredArticles.map((article) => (
               <tr key={article.id}>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
@@ -149,7 +221,7 @@ const Articles = () => {
                 <td className="px-6 py-4">{article.profiles?.name}</td>
                 <td className="px-6 py-4">
                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(article.status)}`}>
-                    {article.status}
+                    {article.status.replace('_', ' ')}
                   </span>
                 </td>
                 <td className="px-6 py-4">{article.is_hot ? '🔥' : ''}</td>
@@ -159,24 +231,53 @@ const Articles = () => {
                     ? new Date(article.published_at).toLocaleDateString()
                     : new Date(article.created_at).toLocaleDateString()}
                 </td>
-                {(isAdmin || isEditor) && (
-                  <td className="px-6 py-4 text-sm">
+                <td className="px-6 py-4 text-sm whitespace-nowrap">
+                  {/* Edit button for admin/editor */}
+                  {(isAdmin || isEditor) && (
                     <button
                       onClick={() => handleEdit(article)}
                       className="text-blue-600 hover:text-blue-900 mr-3"
                     >
                       Edit
                     </button>
-                    {isAdmin && (
-                      <button
-                        onClick={() => handleDelete(article.id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Delete
-                      </button>
-                    )}
-                  </td>
-                )}
+                  )}
+
+                  {/* Admin-specific actions */}
+                  {isAdmin && article.status === 'pending' && (
+                    <button
+                      onClick={() => handleApprove(article.id)}
+                      className="text-green-600 hover:text-green-900 mr-3"
+                    >
+                      Approve
+                    </button>
+                  )}
+                  {isAdmin && article.status === 'delete_requested' && (
+                    <button
+                      onClick={() => handleAdminDelete(article.id)}
+                      className="text-red-600 hover:text-red-900 mr-3"
+                    >
+                      Approve Delete
+                    </button>
+                  )}
+                  {isAdmin && article.status !== 'delete_requested' && (
+                    <button
+                      onClick={() => handleAdminDelete(article.id)}
+                      className="text-red-600 hover:text-red-900 mr-3"
+                    >
+                      Delete
+                    </button>
+                  )}
+
+                  {/* Editor-specific action */}
+                  {isEditor && !isAdmin && article.status !== 'delete_requested' && (
+                    <button
+                      onClick={() => handleRequestDelete(article.id)}
+                      className="text-orange-600 hover:text-orange-900"
+                    >
+                      Request Delete
+                    </button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>

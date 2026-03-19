@@ -19,6 +19,7 @@ import Articles from './admin/Articles';
 import Ads from './admin/Ads';
 import GalleryAdmin from './admin/Gallery';
 import TestUpload from './components/TestUpload';
+import ChangePassword from './admin/ChangePassword';
 
 const Home = () => (
   <div className="w-full">
@@ -174,8 +175,14 @@ function App() {
                 } />
 
                 <Route path="gallery" element={
-                  <ProtectedRoute allowedRoles={['admin']}>
+                  <ProtectedRoute allowedRoles={['admin', 'editor']}>
                     <GalleryAdmin />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="change-password" element={
+                  <ProtectedRoute allowedRoles={['admin', 'editor']}>
+                    <ChangePassword />
                   </ProtectedRoute>
                 } />
 

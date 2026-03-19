@@ -20,7 +20,7 @@ const AdminLayout = () => {
   window.location.href = '/login'; 
 };
 
-  return (
+   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
       <div className="w-64 bg-white shadow-md">
@@ -30,31 +30,53 @@ const AdminLayout = () => {
         </div>
         <nav className="p-4">
           <ul className="space-y-2">
+            {/* Dashboard – visible to all */}
             <li>
               <Link to="/admin" className="block p-2 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
                 Dashboard
               </Link>
             </li>
-            <li>
-              <Link to="/admin/categories" className="block p-2 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
-                Categories
-              </Link>
-            </li>
+
+            {/* Categories – admin only */}
+            {profile?.role === 'admin' && (
+              <li>
+                <Link to="/admin/categories" className="block p-2 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+                  Categories
+                </Link>
+              </li>
+            )}
+
+            {/* Articles – all */}
             <li>
               <Link to="/admin/articles" className="block p-2 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
                 Articles
               </Link>
             </li>
-            <li>
-              <Link to="/admin/ads" className="block p-2 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
-                Advertisements
-              </Link>
-            </li>
+
+            {/* Advertisements – admin only */}
+            {profile?.role === 'admin' && (
+              <li>
+                <Link to="/admin/ads" className="block p-2 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+                  Advertisements
+                </Link>
+              </li>
+            )}
+
+            {/* Gallery – all (since editors can upload) */}
             <li>
               <Link to="/admin/gallery" className="block p-2 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
                 Gallery
               </Link>
             </li>
+
+            {/* Change Password – all */}
+            <li>
+              <Link to="/admin/change-password" className="block p-2 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+                Change Password
+              </Link>
+            </li>
+
+            {/* Logout – all */}
             <li>
               <button
                 onClick={handleLogout}

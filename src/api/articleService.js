@@ -101,3 +101,31 @@ export const getAuthors = async () => {
   if (error) throw error;
   return data;
 };
+
+/**
+ * Approve an article (admin only)
+ * Sets status to 'published' and sets published_at if not already set
+ * @param {string} id
+ */
+export const approveArticle = async (id) => {
+  const { error } = await supabase
+    .from('articles')
+    .update({ 
+      status: 'published', 
+      published_at: new Date().toISOString() 
+    })
+    .eq('id', id);
+  if (error) throw error;
+};
+
+/**
+ * Request deletion of an article (editor)
+ * @param {string} id
+ */
+export const requestArticleDelete = async (id) => {
+  const { error } = await supabase
+    .from('articles')
+    .update({ status: 'delete_requested' })
+    .eq('id', id);
+  if (error) throw error;
+};

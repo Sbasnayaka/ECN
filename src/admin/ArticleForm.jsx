@@ -1,7 +1,21 @@
 import { useState, useEffect } from 'react';
 import { getUploadUrl, getPublicUrl } from '../api/r2Service';
+import { useAuth } from '../context/AuthContext';
+import { getCategories, getAuthors } from '../api/articleService';
+
+
 
 const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
+  const { profile } = useAuth();
+  const isEditor = profile?.role === 'editor';
+
+  // Local copies — fetched directly so editors always see data
+  // even if the parent Articles.jsx fetch failed due to RLS
+  const [localCategories, setLocalCategories] = useState([]);
+  const [localAuthors, setLocalAuthors] = useState([]);
+  // Display value for the author combobox (name shown to user)
+  const [authorInput, setAuthorInput] = useState('');
+
   const [formData, setFormData] = useState({
     title: '',
     excerpt: '',
@@ -19,6 +33,17 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState('');
 
+  // Fetch categories and authors directly inside the form.
+  // This is independent of the parent so it always works for editors.
+  useEffect(() => {
+    getCategories()
+      .then(setLocalCategories)
+      .catch(err => console.error('ArticleForm: failed to load categories:', err));
+    getAuthors()
+      .then(setLocalAuthors)
+      .catch(err => console.error('ArticleForm: failed to load authors:', err));
+  }, []);
+
   useEffect(() => {
     if (article) {
       setFormData({
@@ -34,8 +59,11 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
         published_at: article.published_at || null,
       });
       setPreview(article.image_url || '');
+      // Pre-populate author display name when editing
+      const matched = localAuthors.find(a => a.id === article.author_id);
+      if (matched) setAuthorInput(matched.name);
     }
-  }, [article]);
+  }, [article, localAuthors]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -53,6 +81,15 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
       reader.onloadend = () => setPreview(reader.result);
       reader.readAsDataURL(selectedFile);
     }
+  };
+
+  // Author combobox handler: user types or picks a name;
+  // we look up the matching author_id to keep data integrity.
+  const handleAuthorChange = (e) => {
+    const typed = e.target.value;
+    setAuthorInput(typed);
+    const matched = localAuthors.find(a => a.name === typed);
+    setFormData(prev => ({ ...prev, author_id: matched ? matched.id : '' }));
   };
 
   const handleSubmit = async (e) => {
@@ -82,6 +119,9 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
       } finally {
         setUploading(false);
       }
+    }
+    if (isEditor) {
+      formData.status = 'pending';
     }
 
     // If status is 'published' and no published_at, set current time
@@ -134,7 +174,7 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
             >
               <option value="">Select category</option>
-              {categories.map(cat => (
+              {localCategories.map(cat => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
@@ -142,33 +182,50 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">Author</label>
-            <select
-              name="author_id"
-              value={formData.author_id}
-              onChange={handleChange}
+            {/* Combobox: type to search or click to select from the list */}
+            <input
+              type="text"
+              list="authors-datalist"
+              value={authorInput}
+              onChange={handleAuthorChange}
               required
+              placeholder="Type or select author name..."
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            >
-              <option value="">Select author</option>
-              {authors.map(author => (
-                <option key={author.id} value={author.id}>{author.name}</option>
+            />
+            <datalist id="authors-datalist">
+              {localAuthors.map(author => (
+                <option key={author.id} value={author.name} />
               ))}
-            </select>
+            </datalist>
+            {/* Show a hint if typed name doesn't match any known author */}
+            {authorInput && !localAuthors.find(a => a.name === authorInput) && (
+              <p className="text-xs text-orange-500 mt-1">⚠ Name not found in author list. Please select a valid author.</p>
+            )}
           </div>
 
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            >
-              <option value="draft">Draft</option>
-              <option value="pending">Pending Approval</option>
-              <option value="published">Published</option>
-            </select>
-          </div>
+
+          {!isEditor && (
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+          <select
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          >
+            <option value="draft">Draft</option>
+            <option value="pending">Pending Approval</option>
+            <option value="published">Published</option>
+          </select>
+        </div>
+      )}
+
+      {/* If editor, show a static note */}
+      {isEditor && (
+        <div className="mb-4 p-3 bg-yellow-50 text-yellow-800 rounded-md">
+          <p className="text-sm">Your article will be submitted as <strong>pending</strong> for admin approval.</p>
+        </div>
+      )}
 
           <div className="flex gap-4 mb-4">
             <label className="inline-flex items-center">

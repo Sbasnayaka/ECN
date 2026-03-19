@@ -2,13 +2,20 @@ import { supabase } from './supabaseClient';
 
 /**
  * Fetch all gallery images
- * @returns {Promise<Array>} List of gallery items
+ * @param {string} statusFilter - optional filter by status (e.g., 'pending', 'approved')
+ * @returns {Promise<Array>}
  */
-export const getGallery = async () => {
-  const { data, error } = await supabase
+export const getGallery = async (statusFilter = null) => {
+  let query = supabase
     .from('gallery')
     .select('*')
     .order('created_at', { ascending: false });
+  
+  if (statusFilter) {
+    query = query.eq('status', statusFilter);
+  }
+  
+  const { data, error } = await query;
   if (error) throw error;
   return data;
 };
@@ -16,12 +23,13 @@ export const getGallery = async () => {
 /**
  * Create a new gallery item
  * @param {Object} item - { title, image_url }
- * @returns {Promise<Object>} Created gallery item
+ * @returns {Promise<Object>}
  */
 export const createGalleryItem = async (item) => {
+  // New items start with status 'pending'
   const { data, error } = await supabase
     .from('gallery')
-    .insert([item])
+    .insert([{ ...item, status: 'pending' }])
     .select();
   if (error) throw error;
   return data[0];
@@ -29,9 +37,9 @@ export const createGalleryItem = async (item) => {
 
 /**
  * Update a gallery item (e.g., change title)
- * @param {string} id - Gallery item ID
+ * @param {string} id
  * @param {Object} updates - { title }
- * @returns {Promise<Object>} Updated item
+ * @returns {Promise<Object>}
  */
 export const updateGalleryItem = async (id, updates) => {
   const { data, error } = await supabase
@@ -42,6 +50,55 @@ export const updateGalleryItem = async (id, updates) => {
   if (error) throw error;
   return data[0];
 };
+
+/**
+ * Approve a gallery item (admin only)
+ * @param {string} id
+ */
+export const approveGalleryItem = async (id) => {
+  const { error } = await supabase
+    .from('gallery')
+    .update({ status: 'approved' })
+    .eq('id', id);
+  if (error) throw error;
+};
+
+/**
+ * Request deletion of a gallery item (editor)
+ * @param {string} id
+ */
+export const requestGalleryDelete = async (id) => {
+  const { error } = await supabase
+    .from('gallery')
+    .update({ status: 'delete_requested' })
+    .eq('id', id);
+  if (error) throw error;
+};
+
+/**
+ * Admin delete a gallery item (after approving delete request)
+ * @param {string} id
+ * @param {string} imageUrl - for R2 deletion
+ */
+export const adminDeleteGalleryItem = async (id, imageUrl) => {
+  // Delete from R2
+  try {
+    const urlParts = imageUrl.split('/');
+    const key = urlParts.slice(3).join('/');
+    const { deleteImage } = await import('./r2Service');
+    await deleteImage(key);
+  } catch (err) {
+    console.warn('Failed to delete image from R2:', err);
+  }
+
+  // Delete from database
+  const { error } = await supabase
+    .from('gallery')
+    .delete()
+    .eq('id', id);
+  if (error) throw error;
+};
+
 
 /**
  * Delete a gallery item
@@ -68,3 +125,4 @@ export const deleteGalleryItem = async (id, imageUrl) => {
     .eq('id', id);
   if (error) throw error;
 };
+
