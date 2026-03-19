@@ -149,7 +149,7 @@ function App() {
                   />
                 }
               />
-              <Route path="/login" element={<Login />} />             
+              <Route path="/login" element={<Login />} />
               <Route path="/admin" element={
                 <ProtectedRoute>
                   <AdminLayout />
@@ -168,7 +168,12 @@ function App() {
                   </ProtectedRoute>
                 } />
 
-                <Route path="gallery" element={<GalleryAdmin />} />
+                <Route path="gallery" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <GalleryAdmin />
+                  </ProtectedRoute>
+                } />
+
                 {/* Mention: Keeping this if you still need it */}
                 <Route path="test-upload" element={<TestUpload />} />
               </Route>
@@ -178,13 +183,13 @@ function App() {
               <Route path="/advertising" element={<AdvertisingPage />} />
               <Route path="/about" element={<AboutPage />} />
             </Routes>
-            
+
           </main>
           <Footer />
         </div>
       </div>
     </Router>
-    
+
   );
 }
 
