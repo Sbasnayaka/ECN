@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AD_POSITIONS } from '../api/adService';
+import { getUploadUrl, getPublicUrl } from '../api/r2Service';
 
 const AdForm = ({ ad, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,9 @@ const AdForm = ({ ad, onSubmit, onCancel }) => {
     ad_code: '',
     is_active: true,
   });
+  const [file, setFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState('');
 
   useEffect(() => {
     if (ad) {
@@ -23,6 +27,7 @@ const AdForm = ({ ad, onSubmit, onCancel }) => {
         ad_code: ad.ad_code || '',
         is_active: ad.is_active ?? true,
       });
+      setPreview(ad.image_url || '');
     }
   }, [ad]);
 
@@ -32,10 +37,58 @@ const AdForm = ({ ad, onSubmit, onCancel }) => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+    // Clear file and preview if switching away from image type
+    if (name === 'type' && value !== 'image') {
+      setFile(null);
+      setPreview('');
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      // Create local preview
+      const reader = new FileReader();
+      reader.onloadend = () => setPreview(reader.result);
+      reader.readAsDataURL(selectedFile);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // For image ads, if a new file is selected, upload it first
+    if (formData.type === 'image' && file) {
+      try {
+        setUploading(true);
+        // Generate unique key: ads/timestamp-filename
+        const key = `ads/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
+        const uploadUrl = await getUploadUrl(key, file.type);
+
+        const uploadResponse = await fetch(uploadUrl, {
+          method: 'PUT',
+          body: file,
+          headers: { 'Content-Type': file.type }
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error('Upload to R2 failed');
+        }
+
+        // Set the public URL in formData
+        formData.image_url = getPublicUrl(key);
+      } catch (err) {
+        console.error('Upload error:', err);
+        alert('Failed to upload image. Please try again.');
+        setUploading(false);
+        return;
+      } finally {
+        setUploading(false);
+      }
+    }
+
+    // Submit the form data (with possibly new image_url)
     onSubmit(formData);
   };
 
@@ -102,17 +155,25 @@ const AdForm = ({ ad, onSubmit, onCancel }) => {
       {formData.type === 'image' ? (
         <>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Upload Image</label>
             <input
-              type="url"
-              name="image_url"
-              value={formData.image_url}
-              onChange={handleChange}
-              required={formData.type === 'image'}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="https://..."
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Leave empty to keep existing image (when editing).
+            </p>
           </div>
+
+          {preview && (
+            <div className="mb-4">
+              <p className="text-sm font-medium text-gray-700 mb-1">Preview:</p>
+              <img src={preview} alt="Preview" className="max-h-32 rounded border" />
+            </div>
+          )}
+
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">Link URL</label>
             <input
@@ -125,6 +186,9 @@ const AdForm = ({ ad, onSubmit, onCancel }) => {
               placeholder="https://..."
             />
           </div>
+
+          {/* Hidden field for image_url – it will be set after upload */}
+          <input type="hidden" name="image_url" value={formData.image_url} />
         </>
       ) : (
         <div className="mb-4">
@@ -161,15 +225,17 @@ const AdForm = ({ ad, onSubmit, onCancel }) => {
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+          disabled={uploading}
+          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          disabled={uploading}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
         >
-          {ad ? 'Update' : 'Create'}
+          {uploading ? 'Uploading...' : (ad ? 'Update' : 'Create')}
         </button>
       </div>
     </form>
