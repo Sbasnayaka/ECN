@@ -10,7 +10,6 @@ import ArticlePage from "./pages/ArticlePage";
 import AboutPage from "./pages/AboutPage";
 import AdvertisingPage from "./pages/AdvertisingPage";
 import Login from './pages/Login';
-import topBannerImg from "./assets/Top Banner - Header Section.webp";
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminLayout from './admin/AdminLayout';
 import AdminDashboard from './admin/Dashboard';
@@ -20,6 +19,7 @@ import Ads from './admin/Ads';
 import GalleryAdmin from './admin/Gallery';
 import TestUpload from './components/TestUpload';
 import ChangePassword from './admin/ChangePassword';
+import TopBannerSlider from "./components/TopBannerSlider";
 
 const Home = () => (
   <div className="w-full">
@@ -53,17 +53,13 @@ function App() {
         <div className="w-full max-w-[1200px] bg-white flex flex-col shadow-2xl min-h-screen overflow-hidden">
           <Navigation />
           <NewsTicker />
-
-          {/* Top Banner - Header Section (Client Requested) */}
-          <div className="w-full pt-6 md:pt-8 bg-white">
+          {/* Top Banner Slider - Replaces static image */}
+          <div className="w-full pt-4 md:pt-6 bg-white">
             <div className="max-w-[1200px] mx-auto px-4">
-              <img
-                src={topBannerImg}
-                alt="ECN Top Banner"
-                className="w-full h-auto object-contain rounded shadow-sm border border-gray-100"
-              />
+              <TopBannerSlider />
             </div>
           </div>
+
 
           <main className="flex-grow">
             <Routes>
