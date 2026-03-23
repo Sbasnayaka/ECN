@@ -174,9 +174,9 @@ const NewsFeed = () => {
   const [businessLimit, setBusinessLimit] = useState(4);
 
   return (
-    <div className="flex flex-col gap-8 w-full">
+    <div className="flex flex-col gap-2 w-full">
       {/* Section 4: 3 Small Ads */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-2">
         <AdBanner size="small" image={topAdImage} />
         <AdBanner size="small" image={topAdImage} />
         <AdBanner size="small" image={topAdImage} />
@@ -203,7 +203,7 @@ const NewsFeed = () => {
       </div>
 
       {/* Section 7: 2 Medium Ads */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-2">
         <AdBanner size="medium" />
         <AdBanner size="medium" />
       </div>
@@ -211,7 +211,7 @@ const NewsFeed = () => {
       {/* Section 8: Hot News Section */}
       <div>
         <SectionHeader theme="red" title="උණුසුම් පුවත්" />
-        <div className="flex flex-col gap-4 mt-4 mb-4">
+        <div className="flex flex-col gap-2 mt-2 mb-2">
           {hotNewsData.slice(0, hotNewsLimit).map((news) => (
             <HorizontalNewsCard key={news.id} {...news} isHotNews={true} />
           ))}
@@ -225,7 +225,7 @@ const NewsFeed = () => {
       </div>
 
       {/* Section 9: 2 Medium Ads */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-2">
         <AdBanner size="medium" />
         <AdBanner size="medium" />
       </div>
@@ -233,7 +233,7 @@ const NewsFeed = () => {
       {/* Section 10: Politics News */}
       <div>
         <SectionHeader theme="orange" title="දේශපාලන පුවත්" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 mb-2">
           {politicsNewsData.slice(0, politicsLimit).map((news) => (
             <VerticalNewsCard key={news.id} {...news} />
           ))}
@@ -249,7 +249,7 @@ const NewsFeed = () => {
       {/* Section 11: Local News */}
       <div>
         <SectionHeader theme="cyan" title="දේශීය පුවත්" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 mb-2">
           {localNewsData.slice(0, localLimit).map((news) => (
             <VerticalNewsCard key={news.id} {...news} />
           ))}
@@ -265,7 +265,7 @@ const NewsFeed = () => {
       {/* Section 12: Business News */}
       <div>
         <SectionHeader theme="darkRed" title="ව්‍යාපාරික පුවත්" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 mb-2">
           {businessNewsData.slice(0, businessLimit).map((news) => (
             <VerticalNewsCard key={news.id} {...news} />
           ))}
@@ -281,7 +281,7 @@ const NewsFeed = () => {
       {/* New Section: Sports News */}
       <div>
         <SectionHeader theme="green" title="ක්‍රීඩා පුවත්" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 mb-2">
           {sportsNewsData.slice(0, sportsLimit).map((news) => (
             <VerticalNewsCard key={news.id} {...news} />
           ))}
@@ -297,7 +297,7 @@ const NewsFeed = () => {
       {/* New Section: Foreign News */}
       <div>
         <SectionHeader theme="blue" title="විදෙස් පුවත්" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 mb-2">
           {foreignNewsData.slice(0, foreignLimit).map((news) => (
             <VerticalNewsCard key={news.id} {...news} />
           ))}

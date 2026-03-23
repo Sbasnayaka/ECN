@@ -23,7 +23,7 @@ import TopBannerSlider from "./components/TopBannerSlider";
 
 const Home = () => (
   <div className="w-full">
-    <div className="max-w-[1200px] mx-auto px-4 py-8">
+    <div className="max-w-[1200px] mx-auto px-4 py-2">
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Left Column: Main News Feed */}
         <div className="lg:w-2/3">
@@ -54,7 +54,7 @@ function App() {
           <Navigation />
           <NewsTicker />
           {/* Top Banner Slider - Replaces static image */}
-          <div className="w-full pt-4 md:pt-6 bg-white">
+          <div className="w-full pt-1 md:pt-2 bg-white">
             <div className="max-w-[1200px] mx-auto px-4">
               <TopBannerSlider />
             </div>
