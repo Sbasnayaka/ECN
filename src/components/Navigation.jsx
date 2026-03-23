@@ -4,9 +4,7 @@ import logoImg from "../assets/logo.jpeg";
 import searchIcon from "../assets/icons/search.png";
 
 const Navigation = () => {
-  // State for live clock
   const [currentTime, setCurrentTime] = useState(new Date());
-  // State for mobile menu
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -14,7 +12,6 @@ const Navigation = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Format date in a user-friendly format (Matching Figma: Tuesday, March 10, 2026)
   const formatDate = (date) => {
     const options = {
       weekday: "long",
@@ -25,7 +22,6 @@ const Navigation = () => {
     return date.toLocaleDateString("en-US", options);
   };
 
-  // Format time (Matching Figma: 09:10 AM)
   const formatTime = (date) => {
     return date.toLocaleTimeString("en-US", {
       hour: "2-digit",
@@ -33,7 +29,6 @@ const Navigation = () => {
     });
   };
 
-  // Array of our categories mapping to page 1 to 11
   const navLinks = [
     { name: "මුල් පිටුව", path: "/" },
     { name: "ප්‍රධාන පුවත්", path: "/main-news" },
@@ -50,32 +45,30 @@ const Navigation = () => {
 
   return (
     <header className="sticky top-0 z-50 shadow-md">
-      {/* Top Sub-Bar (Date, Time, Weather, Contact Us) - Darkest Blue (Hidden on Mobile) */}
-      <div className="hidden md:block bg-[#000061] text-xs sm:text-sm text-gray-300 py-3 w-full border-b border-[#000080]/30">
-        <div className="max-w-[1400px] mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-          {/* Left: Date & Time Pill Shapes */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center border border-[#000080] rounded px-4 py-1.5 bg-transparent">
-              <span className="mr-2 text-blue-400">📅</span>
-              {formatDate(currentTime)}
+      {/* Top Bar – Date, Time, Weather, Ad Contact – compact, no border */}
+      <div className="hidden md:block bg-[#000061] text-gray-300 py-1.5 text-xs">
+        <div className="max-w-[1400px] mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <span className="text-blue-400 text-sm">📅</span>
+              <span>{formatDate(currentTime)}</span>
             </div>
-            <span className="text-[#000080] hidden sm:inline">|</span>
-            <div className="flex items-center border border-[#000080] rounded px-4 py-1.5 bg-transparent">
-              <span className="mr-2 text-gray-400">🕒</span>
-              {formatTime(currentTime)}
+            <span className="text-[#000080]/40">|</span>
+            <div className="flex items-center gap-1">
+              <span className="text-gray-400 text-sm">🕒</span>
+              <span>{formatTime(currentTime)}</span>
             </div>
           </div>
 
-          {/* Right: Weather & Ad Contact */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center border border-[#000080] rounded px-4 py-1.5 bg-transparent">
-              <span className="text-yellow-400 mr-2">🌤️</span>
-              Weather
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <span className="text-yellow-400 text-sm">🌤️</span>
+              <span>Weather</span>
             </div>
-            <span className="text-[#000080] hidden sm:inline">|</span>
+            <span className="text-[#000080]/40">|</span>
             <Link
               to="/advertising"
-              className="border border-[#000080] rounded px-4 py-1.5 bg-transparent text-yellow-500 hover:text-yellow-400 transition-colors"
+              className="text-yellow-500 hover:text-yellow-400 transition-colors"
             >
               Advertisement Contact Us
             </Link>
@@ -83,61 +76,59 @@ const Navigation = () => {
         </div>
       </div>
 
-      {/* Main Navigation Bar - Primary Navy Blue */}
+      {/* Main Navigation Bar */}
       <div className="bg-[#000080] w-full text-white">
         <div className="max-w-[1400px] mx-auto px-4">
-          <div className="flex items-center justify-between py-2 h-16">
-            {/* Mobile: Hamburger Menu (Left) */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden flex flex-col gap-1.5 p-2 z-50"
-              aria-label="Toggle Menu"
-            >
-              <div className={`w-6 h-0.5 bg-white transition-all ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></div>
-              <div className={`w-6 h-0.5 bg-white transition-all ${isMenuOpen ? 'opacity-0' : ''}`}></div>
-              <div className={`w-6 h-0.5 bg-white transition-all ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></div>
-            </button>
-
-            {/* Logo - Centered on mobile, Left on desktop */}
-            <Link
-              to="/"
-              className={`flex items-center justify-center shrink-0 h-10 md:h-12 transition-all duration-300 ${isMenuOpen ? 'opacity-20' : 'opacity-100'} md:opacity-100 md:mr-10 absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0`}
-            >
+          <div className="flex items-center justify-between py-1.5 min-h-[56px]">
+            {/* Logo – left on all devices */}
+            <Link to="/" className="shrink-0">
               <img
                 src={logoImg}
                 alt="ECN Logo"
-                className="h-full w-auto object-contain rounded"
+                className="h-8 md:h-10 w-auto object-contain rounded"
+                style={{ maxWidth: "120px" }}
               />
             </Link>
 
-            {/* Mobile: Search Icon (Right) */}
-            <button className="md:hidden p-2 text-white" aria-label="Search">
-              <img 
-                src={searchIcon} 
-                alt="Search" 
-                className="w-6 h-6 invert brightness-0" 
-              />
-            </button>
-
-            {/* Desktop Navigation Links (Hidden on mobile) */}
-            <nav className="hidden md:flex flex-nowrap items-center justify-end gap-x-1.5 flex-1">
+            {/* Desktop Navigation Links (hidden on mobile) */}
+            <nav className="hidden md:flex items-center gap-x-1 flex-1 justify-end">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  className="px-2 py-1.5 text-sm lg:text-[15px] font-bold transition-all duration-200 whitespace-nowrap rounded hover:bg-[#000061] hover:text-blue-200"
+                  className="px-1.5 py-1 text-[12px] lg:text-[14px] font-bold whitespace-nowrap rounded hover:bg-[#000061] hover:text-blue-200 transition-all"
                 >
                   {link.name}
                 </Link>
               ))}
             </nav>
+
+            {/* Mobile: Right icons (Search + Hamburger) */}
+            <div className="flex items-center gap-3 md:hidden">
+              <button className="p-1 text-white" aria-label="Search">
+                <img
+                  src={searchIcon}
+                  alt="Search"
+                  className="w-5 h-5 invert brightness-0"
+                />
+              </button>
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="flex flex-col gap-1.5 p-1"
+                aria-label="Toggle Menu"
+              >
+                <div className={`w-6 h-0.5 bg-white transition-all ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></div>
+                <div className={`w-6 h-0.5 bg-white transition-all ${isMenuOpen ? 'opacity-0' : ''}`}></div>
+                <div className={`w-6 h-0.5 bg-white transition-all ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></div>
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Mobile Dropdown Menu (Overlay) */}
+      {/* Mobile Menu Overlay */}
       <div
-        className={`fixed inset-0 top-[64px] bg-[#000080] z-40 transition-transform duration-300 md:hidden ${
+        className={`fixed inset-0 top-[56px] bg-[#000080] z-40 transition-transform duration-300 md:hidden ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -152,10 +143,9 @@ const Navigation = () => {
               {link.name}
             </Link>
           ))}
-          {/* Mobile-only utility links previously in top bar */}
           <div className="mt-8 pt-8 border-t border-white/20 flex flex-col gap-4">
-             <Link to="/about" className="text-sm text-gray-300" onClick={() => setIsMenuOpen(false)}>About Us</Link>
-             <Link to="/advertising" className="text-sm text-yellow-500" onClick={() => setIsMenuOpen(false)}>Advertisement Contact Us</Link>
+            <Link to="/about" className="text-sm text-gray-300" onClick={() => setIsMenuOpen(false)}>About Us</Link>
+            <Link to="/advertising" className="text-sm text-yellow-500" onClick={() => setIsMenuOpen(false)}>Advertisement Contact Us</Link>
           </div>
         </nav>
       </div>
