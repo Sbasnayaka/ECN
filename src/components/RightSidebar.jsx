@@ -123,9 +123,9 @@ const RightSidebar = () => {
   const [roosarLimit, setRoosarLimit] = useState(8);
 
   return (
-    <aside className="w-full flex flex-col gap-8">
+    <aside className="w-full flex flex-col gap-2">
       {/* Section 14: YouTube Channel Dropdown Section */}
-      <div className="bg-[#e0f2fe] border border-blue-200 p-6 flex flex-col items-center justify-center text-center shadow-sm">
+      <div className="bg-[#e0f2fe] border border-blue-200 p-3 flex flex-col items-center justify-center text-center shadow-sm">
         <div className="w-16 h-16 mb-3 opacity-90">
           <img
             src={ytIcon}
@@ -150,7 +150,7 @@ const RightSidebar = () => {
       {/* Section 15: ගොසිප් */}
       <div className="flex flex-col bg-white border border-gray-100 shadow-sm">
         <SectionHeader title="ගොසිප්" theme="goldenAmber" />
-        <div className="flex flex-col gap-4 p-4">
+        <div className="flex flex-col gap-2 p-2">
           {gossipData.slice(0, gossipLimit).map((article) => (
             <VerticalNewsCard
               key={article.id}
@@ -213,7 +213,7 @@ const RightSidebar = () => {
       {/* Section 18: සුව දිවිය */}
       <div className="flex flex-col bg-white border border-gray-100 shadow-sm">
         <SectionHeader title="සුව දිවිය" theme="lightGreen" />
-        <div className="flex flex-col gap-4 p-4">
+        <div className="flex flex-col gap-2 p-2">
           {suwaDiviData.slice(0, suwaDiviLimit).map((article) => (
             <VerticalNewsCard
               key={article.id}
@@ -239,7 +239,7 @@ const RightSidebar = () => {
       {/* Section 20: රූසර */}
       <div className="flex flex-col bg-white border border-gray-100 shadow-sm">
         <SectionHeader title="රූසර" theme="brownGold" />
-        <div className="flex flex-col gap-4 p-4">
+        <div className="flex flex-col gap-2 p-2">
           {roosarData.slice(0, roosarLimit).map((article) => (
             <VerticalNewsCard
               key={article.id}
