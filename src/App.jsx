@@ -56,8 +56,7 @@ function App() {
         <div className="w-full max-w-[1200px] bg-white flex flex-col shadow-2xl min-h-screen overflow-hidden">
           <Navigation />
           <NewsTicker />
-          {/* Top Banner Slider - Replaces static image */}
-          <div className="w-full pt-1 md:pt-2 bg-white">
+          <div className="w-full pt-4 md:pt-6 bg-white">
             <div className="max-w-[1200px] mx-auto px-4">
               <TopBannerSlider />
             </div>

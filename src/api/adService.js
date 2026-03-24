@@ -70,3 +70,18 @@ export const deleteAd = async (id) => {
     .eq('id', id);
   if (error) throw error;
 };
+
+/**
+ * Fetch active advertisements for a given position
+ * @param {string} position
+ * @returns {Promise<Array>}
+ */
+export const getAdsByPosition = async (position) => {
+  const { data, error } = await supabase
+    .from('advertisements')
+    .select('*')
+    .eq('position', position)
+    .eq('is_active', true);
+  if (error) throw error;
+  return data;
+};

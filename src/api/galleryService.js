@@ -1,21 +1,15 @@
 import { supabase } from './supabaseClient';
 
+
 /**
- * Fetch all gallery images
- * @param {string} statusFilter - optional filter by status (e.g., 'pending', 'approved')
- * @returns {Promise<Array>}
+ * Fetch all approved gallery images
  */
-export const getGallery = async (statusFilter = null) => {
-  let query = supabase
+export const getGallery = async () => {
+  const { data, error } = await supabase
     .from('gallery')
     .select('*')
+    .eq('status', 'approved')
     .order('created_at', { ascending: false });
-  
-  if (statusFilter) {
-    query = query.eq('status', statusFilter);
-  }
-  
-  const { data, error } = await query;
   if (error) throw error;
   return data;
 };
