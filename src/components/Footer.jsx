@@ -1,4 +1,6 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { getCategories } from "../api/categoryService";
 import ecnLogo from "../assets/logo.jpeg";
 import fbIcon from "../assets/icons/facebook.png";
 import instaIcon from "../assets/icons/instagram.png";
@@ -7,6 +9,20 @@ import xIcon from "../assets/icons/x-icon.png";
 import ytIcon from "../assets/icons/youtube.png";
 
 const Footer = () => {
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getCategories();
+        setCategories(data);
+      } catch (err) {
+        console.error("Failed to fetch categories for footer:", err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   return (
     <footer className="bg-ecn-dark-blue text-ecn-white mt-12 py-8 border-t-4 border-ecn-navy">
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -16,12 +32,9 @@ const Footer = () => {
             <img
               src={ecnLogo}
               alt="ECN Logo"
-              className="w-12 h-12 rounded bg-white object-contain"
+              className="h-10 md:h-12 w-auto object-contain rounded"
+              style={{ maxWidth: "260px" }}
             />
-            <h2 className="text-2xl font-bold">
-              <span className="text-white">E Capital</span>{" "}
-              <span className="text-blue-400">News</span>
-            </h2>
           </div>
           <p className="text-gray-400 text-sm mb-4">
             ශ්‍රී ලංකාවේ ප්‍රමුඛතම සහ විශ්වාසවන්තම පුවත් වෙබ් අඩවිය. නවතම
@@ -29,61 +42,30 @@ const Footer = () => {
           </p>
         </div>
 
-        {/* Quick Links */}
+        {/* Quick Links - Dynamic Categories in 3 Columns */}
         <div>
           <h3 className="text-lg font-semibold mb-4 border-b border-gray-700 pb-2">
             වැදගත් සබැඳි (Quick Links)
           </h3>
-          <ul className="grid grid-cols-2 gap-y-2 gap-x-4 text-sm text-gray-300">
-            <li>
-              <Link to="/hot" className="hover:text-white">
-                උණුසුම් පුවත්
-              </Link>
-            </li>
-            <li>
-              <Link to="/main-news" className="hover:text-white">
-                ප්‍රධාන පුවත්
-              </Link>
-            </li>
-            <li>
-              <Link to="/politics" className="hover:text-white">
-                දේශපාලන පුවත්
-              </Link>
-            </li>
-            <li>
-              <Link to="/local" className="hover:text-white">
-                දේශීය පුවත්
-              </Link>
-            </li>
-            <li>
-              <Link to="/business" className="hover:text-white">
-                ව්‍යාපාරික පුවත්
-              </Link>
-            </li>
-            <li>
-              <Link to="/sports" className="hover:text-white">
-                ක්‍රීඩා පුවත්
-              </Link>
-            </li>
-            <li>
-              <Link to="/foreign" className="hover:text-white">
-                විදෙස් පුවත්
-              </Link>
-            </li>
-            <li>
-              <Link to="/gossip" className="hover:text-white">
-                ගොසිප්
-              </Link>
-            </li>
-            <li className="col-span-2">
-              <Link to="/gallery" className="hover:text-white">
-                ඡායාරූප ගැලරිය
-              </Link>
-            </li>
-          </ul>
+          {categories.length > 0 ? (
+            <ul className="grid grid-cols-3 gap-x-4 gap-y-2 text-sm text-gray-300">
+              {categories.map((cat) => (
+                <li key={cat.id}>
+                  <Link
+                    to={`/${cat.slug}`}
+                    className="hover:text-white transition-colors"
+                  >
+                    {cat.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-gray-400">Loading categories...</p>
+          )}
         </div>
 
-        {/* Contact info */}
+        {/* Contact info + New Policy Links */}
         <div>
           <h3 className="text-lg font-semibold mb-4 border-b border-gray-700 pb-2">
             අප හා සම්බන්ධ වන්න
@@ -97,6 +79,21 @@ const Footer = () => {
             <li>
               <Link to="/advertising" className="hover:text-white">
                 Advertising Rates
+              </Link>
+            </li>
+            <li>
+              <Link to="/privacy-policy" className="hover:text-white">
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link to="/terms" className="hover:text-white">
+                Terms and Conditions
+              </Link>
+            </li>
+            <li>
+              <Link to="/advertising-policy" className="hover:text-white">
+                Advertising Policy
               </Link>
             </li>
             <li className="pt-2">Email: info@ecapitalnews.com</li>

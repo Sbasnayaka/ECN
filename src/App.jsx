@@ -20,6 +20,9 @@ import GalleryAdmin from './admin/Gallery';
 import TestUpload from './components/TestUpload';
 import ChangePassword from './admin/ChangePassword';
 import TopBannerSlider from "./components/TopBannerSlider";
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import Terms from './pages/Terms';
+import AdvertisingPolicy from './pages/AdvertisingPolicy';
 
 const Home = () => (
   <div className="w-full">
@@ -190,6 +193,9 @@ function App() {
               {/* Static Content Routes */}
               <Route path="/advertising" element={<AdvertisingPage />} />
               <Route path="/about" element={<AboutPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/advertising-policy" element={<AdvertisingPolicy />} />
             </Routes>
 
           </main>
