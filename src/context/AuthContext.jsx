@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../api/supabaseClient';
+import { setAccessToken } from '../api/tokenStore';
 
 const AuthContext = createContext({});
 
@@ -16,6 +17,7 @@ export const AuthProvider = ({ children }) => {
             const { data: { session } } = await supabase.auth.getSession();
             console.log('Session:', session);
             if (session?.user) {
+                setAccessToken(session.access_token); // save token for write operations
                 setUser(session.user);
                 await fetchProfile(session.user.id);
             }
@@ -27,9 +29,11 @@ export const AuthProvider = ({ children }) => {
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
             console.log('Auth state changed:', _event, session);
             if (session?.user) {
+                setAccessToken(session.access_token); // save token for write operations
                 setUser(session.user);
                 await fetchProfile(session.user.id);
             } else {
+                setAccessToken(null);
                 setUser(null);
                 setProfile(null);
             }

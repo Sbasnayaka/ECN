@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import DOMPurify from 'dompurify';
 import RightSidebar from "../components/RightSidebar";
 import { getArticleById, incrementViewCount, getRelatedArticles } from "../api/articleService";
 import { getAds } from "../api/adService";
@@ -190,14 +191,22 @@ const ArticlePage = () => {
 
               {/* Article Body Content */}
               <div className="max-w-none text-gray-800">
-                {article.content.split("\n\n").map((paragraph, index) => (
-                  <p
-                    key={index}
-                    className="mb-5 text-[16px] leading-[1.8] text-left font-normal text-gray-700"
-                  >
-                    {paragraph.trim()}
-                  </p>
-                ))}
+               {(() => {
+                  const content = article.content;
+                  // Check if content contains HTML tags
+                  const isHtml = /<[a-z][\s\S]*>/i.test(content);
+                  if (isHtml) {
+                    const sanitizedHtml = DOMPurify.sanitize(content);
+                    return <div dangerouslySetInnerHTML={{ __html: sanitizedHtml }} />;
+                  } else {
+                    // Plain text with paragraphs separated by \n\n
+                    return content.split("\n\n").map((paragraph, index) => (
+                      <p key={index} className="mb-5 text-[16px] leading-[1.8] text-left font-normal text-gray-700">
+                        {paragraph.trim()}
+                      </p>
+                    ));
+                  }
+                })()}
               </div>
 
               {/* Reaction Widget */}

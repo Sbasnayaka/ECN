@@ -1,21 +1,11 @@
 import { useState, useEffect } from 'react';
+import { Editor } from '@tinymce/tinymce-react';
 import { getUploadUrl, getPublicUrl } from '../api/r2Service';
 import { useAuth } from '../context/AuthContext';
-import { getCategories, getAuthors } from '../api/articleService';
-
-
 
 const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
   const { profile } = useAuth();
   const isEditor = profile?.role === 'editor';
-
-  // Local copies — fetched directly so editors always see data
-  // even if the parent Articles.jsx fetch failed due to RLS
-  const [localCategories, setLocalCategories] = useState([]);
-  const [localAuthors, setLocalAuthors] = useState([]);
-  // Display value for the author combobox (name shown to user)
-  const [authorInput, setAuthorInput] = useState('');
-
   const [formData, setFormData] = useState({
     title: '',
     excerpt: '',
@@ -23,47 +13,39 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
     image_url: '',
     category_id: '',
     author_id: '',
+    author_display_name: '',
     status: 'draft',
     is_hot: false,
     is_featured: false,
     published_at: null,
   });
-
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState('');
 
-  // Fetch categories and authors directly inside the form.
-  // This is independent of the parent so it always works for editors.
-  useEffect(() => {
-    getCategories()
-      .then(setLocalCategories)
-      .catch(err => console.error('ArticleForm: failed to load categories:', err));
-    getAuthors()
-      .then(setLocalAuthors)
-      .catch(err => console.error('ArticleForm: failed to load authors:', err));
-  }, []);
-
   useEffect(() => {
     if (article) {
+      let contentValue = article.content || '';
+      // If content is plain text (no HTML tags), convert to HTML for the editor
+      if (!contentValue.includes('<') && !contentValue.includes('>')) {
+        contentValue = contentValue.split('\n\n').map(para => `<p>${para.trim()}</p>`).join('');
+      }
       setFormData({
         title: article.title || '',
         excerpt: article.excerpt || '',
-        content: article.content || '',
+        content: contentValue,
         image_url: article.image_url || '',
         category_id: article.category_id || '',
         author_id: article.author_id || '',
+        author_display_name: article.author_display_name || '',
         status: article.status || 'draft',
         is_hot: article.is_hot || false,
         is_featured: article.is_featured || false,
         published_at: article.published_at || null,
       });
       setPreview(article.image_url || '');
-      // Pre-populate author display name when editing
-      const matched = localAuthors.find(a => a.id === article.author_id);
-      if (matched) setAuthorInput(matched.name);
     }
-  }, [article, localAuthors]);
+  }, [article]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -71,6 +53,11 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+  };
+
+  const handleEditorChange = (content) => {
+    setFormData(prev => ({ ...prev, content }));
+    console.log('Editor content updated:', content); // add this log temporarily
   };
 
   const handleFileChange = (e) => {
@@ -83,34 +70,24 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
     }
   };
 
-  // Author combobox handler: user types or picks a name;
-  // we look up the matching author_id to keep data integrity.
-  const handleAuthorChange = (e) => {
-    const typed = e.target.value;
-    setAuthorInput(typed);
-    const matched = localAuthors.find(a => a.name === typed);
-    setFormData(prev => ({ ...prev, author_id: matched ? matched.id : '' }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Handle image upload if a new file is selected
+    // Build a plain object copy so we never mutate React state directly
+    const submitData = { ...formData };
+
     if (file) {
       try {
         setUploading(true);
         const key = `articles/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
         const uploadUrl = await getUploadUrl(key, file.type);
-
         const uploadResponse = await fetch(uploadUrl, {
           method: 'PUT',
           body: file,
           headers: { 'Content-Type': file.type }
         });
-
         if (!uploadResponse.ok) throw new Error('Upload failed');
-
-        formData.image_url = getPublicUrl(key);
+        submitData.image_url = getPublicUrl(key);
       } catch (err) {
         console.error('Upload error:', err);
         alert('Image upload failed. Please try again.');
@@ -120,16 +97,18 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
         setUploading(false);
       }
     }
+
+    // Editor: force pending status
     if (isEditor) {
-      formData.status = 'pending';
+      submitData.status = 'pending';
     }
 
-    // If status is 'published' and no published_at, set current time
-    if (formData.status === 'published' && !formData.published_at) {
-      formData.published_at = new Date().toISOString();
+    if (submitData.status === 'published' && !submitData.published_at) {
+      submitData.published_at = new Date().toISOString();
     }
 
-    onSubmit(formData);
+    console.log('Submitting article data:', submitData);
+    onSubmit(submitData);
   };
 
   return (
@@ -174,7 +153,7 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
             >
               <option value="">Select category</option>
-              {localCategories.map(cat => (
+              {categories.map(cat => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
@@ -182,50 +161,53 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">Author</label>
-            {/* Combobox: type to search or click to select from the list */}
-            <input
-              type="text"
-              list="authors-datalist"
-              value={authorInput}
-              onChange={handleAuthorChange}
+            <select
+              name="author_id"
+              value={formData.author_id}
+              onChange={handleChange}
               required
-              placeholder="Type or select author name..."
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
-            <datalist id="authors-datalist">
-              {localAuthors.map(author => (
-                <option key={author.id} value={author.name} />
+            >
+              <option value="">Select author</option>
+              {authors.map(author => (
+                <option key={author.id} value={author.id}>{author.name}</option>
               ))}
-            </datalist>
-            {/* Show a hint if typed name doesn't match any known author */}
-            {authorInput && !localAuthors.find(a => a.name === authorInput) && (
-              <p className="text-xs text-orange-500 mt-1">⚠ Name not found in author list. Please select a valid author.</p>
-            )}
+            </select>
           </div>
 
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Display Name (optional)</label>
+            <input
+              type="text"
+              name="author_display_name"
+              value={formData.author_display_name}
+              onChange={handleChange}
+              placeholder="Leave blank to use author's name"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
 
           {!isEditor && (
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-          <select
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-          >
-            <option value="draft">Draft</option>
-            <option value="pending">Pending Approval</option>
-            <option value="published">Published</option>
-          </select>
-        </div>
-      )}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              >
+                <option value="draft">Draft</option>
+                <option value="pending">Pending Approval</option>
+                <option value="published">Published</option>
+              </select>
+            </div>
+          )}
 
-      {/* If editor, show a static note */}
-      {isEditor && (
-        <div className="mb-4 p-3 bg-yellow-50 text-yellow-800 rounded-md">
-          <p className="text-sm">Your article will be submitted as <strong>pending</strong> for admin approval.</p>
-        </div>
-      )}
+          {isEditor && (
+            <div className="mb-4 p-3 bg-yellow-50 text-yellow-800 rounded-md">
+              <p className="text-sm">Your article will be submitted as <strong>pending</strong> for admin approval.</p>
+            </div>
+          )}
 
           <div className="flex gap-4 mb-4">
             <label className="inline-flex items-center">
@@ -270,21 +252,21 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
         </div>
       </div>
 
-      {/* Content – full width */}
+      {/* Content – Full width with TinyMCE */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-1">Content</label>
-        <textarea
-          name="content"
-          value={formData.content}
-          onChange={handleChange}
-          required
-          rows="12"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono"
-          placeholder="Write article content here. You can use plain text with paragraphs separated by blank lines."
+        <Editor
+          apiKey="kki12gk5xv0oz46zpx7xfnxtgj4i2mlddgzrg1ne3ulo6zrw"
+          initialValue={formData.content}
+          init={{
+            height: 500,
+            menubar: false,
+            plugins: 'advlist autolink lists link image charmap preview anchor',
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat',
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }'
+          }}
+          onEditorChange={handleEditorChange}
         />
-        <p className="text-xs text-gray-500 mt-1">
-          Simple text formatting: use blank lines for paragraphs. (TipTap rich editor can be added later.)
-        </p>
       </div>
 
       <div className="flex justify-end gap-3">

@@ -1,4 +1,6 @@
 import { supabase } from './supabaseClient';
+import { getAccessToken } from './tokenStore';
+
 
 /**
  * Fetch all articles with author and category info
@@ -58,12 +60,37 @@ export const getArticleById = async (id) => {
  * @returns {Promise<Object>}
  */
 export const createArticle = async (article) => {
-  const { data, error } = await supabase
-    .from('articles')
-    .insert([article])
-    .select();
-  if (error) throw error;
-  return data[0];
+  console.log('createArticle called with:', JSON.parse(JSON.stringify(article)));
+
+  // Use direct fetch to bypass Supabase client's internal getSession (which hangs with persistSession:false)
+  const token = getAccessToken();
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+  const response = await fetch(`${supabaseUrl}/rest/v1/articles`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${token || supabaseKey}`,
+      'Prefer': 'return=representation',
+    },
+    body: JSON.stringify(article),
+  });
+
+  const data = await response.json();
+  console.log('Supabase response status:', response.status, data);
+
+  if (!response.ok) {
+    console.error('Supabase insert error — message:', data.message);
+    console.error('Supabase insert error — code:', data.code);
+    console.error('Supabase insert error — details:', data.details);
+    console.error('Supabase insert error — hint:', data.hint);
+    throw new Error(data.message || 'Insert failed');
+  }
+
+  console.log('Article created successfully:', data);
+  return Array.isArray(data) ? data[0] : data;
 };
 
 /**
@@ -126,9 +153,9 @@ export const getAuthors = async () => {
 export const approveArticle = async (id) => {
   const { error } = await supabase
     .from('articles')
-    .update({ 
-      status: 'published', 
-      published_at: new Date().toISOString() 
+    .update({
+      status: 'published',
+      published_at: new Date().toISOString()
     })
     .eq('id', id);
   if (error) throw error;

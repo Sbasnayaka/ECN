@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Editor } from '@tinymce/tinymce-react';
 import Navigation from "./components/Navigation";
 import NewsTicker from "./components/NewsTicker";
 import Footer from "./components/Footer";
@@ -22,6 +23,7 @@ import TopBannerSlider from "./components/TopBannerSlider";
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
 import AdvertisingPolicy from './pages/AdvertisingPolicy';
+
 
 const Home = () => (
   <div className="w-full">

@@ -113,7 +113,9 @@ const Articles = () => {
       if (editingArticle) {
         await updateArticle(editingArticle.id, formData);
       } else {
+        console.log('Sending to service:', formData);
         await createArticle(formData);
+
       }
       setShowForm(false);
       fetchAllData();
