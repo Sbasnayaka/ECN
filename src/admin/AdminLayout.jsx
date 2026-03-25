@@ -6,21 +6,18 @@ const AdminLayout = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-  console.log('Logout button clicked');
-  try {
-    await logout();
-    console.log('Logout completed, navigating to login');
-    navigate('/login');
-  } catch (err) {
-    console.error('Logout error in component:', err);
-    alert('Logout failed. Please try again.');
-  }
+    console.log('Logout button clicked');
+    try {
+      await logout();
+      console.log('Logout completed, navigating to login');
+      navigate('/login');
+    } catch (err) {
+      console.error('Logout error in component:', err);
+      alert('Logout failed. Please try again.');
+    }
+  };
 
-  await logout();
-  window.location.href = '/login'; 
-};
-
-   return (
+  return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
       <div className="w-64 bg-white shadow-md">

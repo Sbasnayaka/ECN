@@ -17,7 +17,6 @@ import Categories from './admin/Categories';
 import Articles from './admin/Articles';
 import Ads from './admin/Ads';
 import GalleryAdmin from './admin/Gallery';
-import TestUpload from './components/TestUpload';
 import ChangePassword from './admin/ChangePassword';
 import TopBannerSlider from "./components/TopBannerSlider";
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -183,9 +182,6 @@ function App() {
                     <ChangePassword />
                   </ProtectedRoute>
                 } />
-
-                {/* Mention: Keeping this if you still need it */}
-                <Route path="test-upload" element={<TestUpload />} />
               </Route>
 
 
