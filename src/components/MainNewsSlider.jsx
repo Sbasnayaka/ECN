@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getFeaturedArticles } from '../api/articleService';
+import { getHotArticles } from '../api/articleService'; // ✅ Changed import
 
 const MainNewsSlider = () => {
   const [slides, setSlides] = useState([]);
@@ -10,10 +10,11 @@ const MainNewsSlider = () => {
   useEffect(() => {
     const fetchSlides = async () => {
       try {
-        const data = await getFeaturedArticles(5);
+        // Fetch top 5 hot articles (limit=5, offset=0)
+        const data = await getHotArticles(5, 0);
         setSlides(data);
       } catch (err) {
-        console.error('Failed to fetch featured articles:', err);
+        console.error('Failed to fetch hot articles for slider:', err);
       } finally {
         setLoading(false);
       }
