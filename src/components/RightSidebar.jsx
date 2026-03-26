@@ -95,12 +95,12 @@ console.log('Rendering RightSidebar, youtubeEnabled:', youtubeEnabled);
     <aside className="w-full flex flex-col gap-8">
       {/* YouTube Section */}
       {youtubeEnabled && (
-        <div className="bg-[#e0f2fe] border border-blue-200 p-6 flex flex-col items-center justify-center text-center shadow-sm">
+        <div className="bg-[#000000] border border-blue-200 p-6 flex flex-col items-center justify-center text-center shadow-sm">
           <div className="w-16 h-16 mb-3 opacity-90">
             <img src={ytIcon} alt="YouTube" className="w-full h-full object-contain filter drop-shadow-md" />
           </div>
-          <h3 className="text-lg font-bold text-ecn-navy mb-2">youtube channel video drop down section</h3>
-          <p className="text-sm text-gray-600 mb-4 font-noto">අපගේ නිල යූටියුබ් නාලිකාව සමග එක්වන්න</p>
+          <h3 className="text-lg font-bold text-ecn-white mb-2">අපගේ නිල යූටියුබ් නාලිකාව සමග එක්වන්න</h3>
+          <p className="text-sm text-gray-600 mb-4 font-noto"></p>
           {youtubeEmbedUrl ? (
             <div className="w-full">
               <iframe
