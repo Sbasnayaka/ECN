@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { 
-  getGallery, 
-  createGalleryItem, 
-  updateGalleryItem, 
-  deleteGalleryItem,
+  getAllGalleryItems,
+  createGalleryItem,
+  updateGalleryItem,
   approveGalleryItem,
   requestGalleryDelete,
-  adminDeleteGalleryItem 
+  adminDeleteGalleryItem
 } from '../api/galleryService';
 import GalleryForm from './GalleryForm';
 import { useAuth } from '../context/AuthContext';
@@ -17,7 +16,6 @@ const GalleryAdmin = () => {
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-  const [statusFilter, setStatusFilter] = useState('all');
   const { profile } = useAuth();
 
   const isAdmin = profile?.role === 'admin';
@@ -30,7 +28,7 @@ const GalleryAdmin = () => {
   const fetchGallery = async () => {
     try {
       setLoading(true);
-      const data = await getGallery();
+      const data = await getAllGalleryItems();
       setItems(data);
       setError('');
     } catch (err) {
@@ -41,10 +39,15 @@ const GalleryAdmin = () => {
     }
   };
 
-  const filteredItems = items.filter(item => {
-    if (statusFilter === 'all') return true;
-    return item.status === statusFilter;
-  });
+  const handleCreate = () => {
+    setEditingItem(null);
+    setShowForm(true);
+  };
+
+  const handleEdit = (item) => {
+    setEditingItem(item);
+    setShowForm(true);
+  };
 
   const handleApprove = async (id) => {
     try {
@@ -70,7 +73,7 @@ const GalleryAdmin = () => {
   const handleAdminDelete = async (item) => {
     if (!window.confirm(`Permanently delete "${item.title}"?`)) return;
     try {
-      await adminDeleteGalleryItem(item.id, item.image_url);
+      await adminDeleteGalleryItem(item.id, item.image_url, item.sub_images || []);
       fetchGallery();
     } catch (err) {
       console.error('Error deleting gallery item:', err);
@@ -78,44 +81,16 @@ const GalleryAdmin = () => {
     }
   };
 
-  const getStatusBadge = (status) => {
-    const colors = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      approved: 'bg-green-100 text-green-800',
-      delete_requested: 'bg-red-100 text-red-800',
-    };
-    return colors[status] || 'bg-gray-100 text-gray-800';
-  };
-
-  const handleCreate = () => {
-    setEditingItem(null);
-    setShowForm(true);
-  };
-
-  const handleEdit = (item) => {
-    setEditingItem(item);
-    setShowForm(true);
-  };
-
-  const handleDelete = async (item) => {
-    if (!window.confirm(`Delete "${item.title}"?`)) return;
-    try {
-      await deleteGalleryItem(item.id, item.image_url);
-      fetchGallery(); // refresh
-    } catch (err) {
-      console.error('Error deleting gallery item:', err);
-      alert('Failed to delete. Check console.');
-    }
-  };
-
   const handleFormSubmit = async (formData) => {
     try {
+      // Determine status based on role
+      const status = isAdmin ? (formData.status || 'approved') : 'pending';
+      const payload = { ...formData, status };
+
       if (editingItem) {
-        await updateGalleryItem(editingItem.id, { title: formData.title });
-        // Note: image_url cannot be updated separately (would need new upload)
-        // For simplicity, we don't allow image replacement in edit. Could extend later.
+        await updateGalleryItem(editingItem.id, payload);
       } else {
-        await createGalleryItem(formData);
+        await createGalleryItem(payload);
       }
       setShowForm(false);
       fetchGallery();
@@ -130,6 +105,15 @@ const GalleryAdmin = () => {
     setEditingItem(null);
   };
 
+  const getStatusBadge = (status) => {
+    const colors = {
+      pending: 'bg-yellow-100 text-yellow-800',
+      approved: 'bg-green-100 text-green-800',
+      delete_requested: 'bg-red-100 text-red-800',
+    };
+    return colors[status] || 'bg-gray-100 text-gray-800';
+  };
+
   if (loading) return <div className="text-center py-8">Loading gallery...</div>;
   if (error) return <div className="text-red-600 py-8">{error}</div>;
 
@@ -139,19 +123,9 @@ const GalleryAdmin = () => {
         <h1 className="text-3xl font-bold">Gallery Management</h1>
         {(isAdmin || isEditor) && (
           <button onClick={handleCreate} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            + Add New Image
+            + Add New Gallery Item
           </button>
         )}
-      </div>
-
-      {/* Status Filter Tabs */}
-      <div className="mb-6 border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
-          <button onClick={() => setStatusFilter('all')} className={`pb-2 px-1 ${statusFilter === 'all' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`}>All</button>
-          <button onClick={() => setStatusFilter('pending')} className={`pb-2 px-1 ${statusFilter === 'pending' ? 'border-b-2 border-yellow-500 text-yellow-600' : 'text-gray-500'}`}>Pending</button>
-          <button onClick={() => setStatusFilter('approved')} className={`pb-2 px-1 ${statusFilter === 'approved' ? 'border-b-2 border-green-500 text-green-600' : 'text-gray-500'}`}>Approved</button>
-          <button onClick={() => setStatusFilter('delete_requested')} className={`pb-2 px-1 ${statusFilter === 'delete_requested' ? 'border-b-2 border-red-500 text-red-600' : 'text-gray-500'}`}>Delete Requests</button>
-        </nav>
       </div>
 
       {showForm && (
@@ -160,12 +134,13 @@ const GalleryAdmin = () => {
             item={editingItem}
             onSubmit={handleFormSubmit}
             onCancel={handleCancel}
+            isAdmin={isAdmin}
           />
         </div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredItems.map((item) => (
+        {items.map((item) => (
           <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden">
             <img src={item.image_url} alt={item.title} className="w-full h-48 object-cover" />
             <div className="p-4">
@@ -175,21 +150,30 @@ const GalleryAdmin = () => {
                   {item.status.replace('_', ' ')}
                 </span>
               </div>
+              {item.sub_images && item.sub_images.length > 0 && (
+                <div className="flex gap-1 mb-2 flex-wrap">
+                  {item.sub_images.slice(0, 3).map((url, idx) => (
+                    <img key={idx} src={url} alt="" className="w-12 h-12 object-cover rounded" />
+                  ))}
+                  {item.sub_images.length > 3 && <span className="text-xs">+{item.sub_images.length-3}</span>}
+                </div>
+              )}
+              {item.admin_note && (
+                <p className="text-xs text-gray-500 italic mt-1">{item.admin_note}</p>
+              )}
               <p className="text-sm text-gray-500 mb-3">
                 Added: {new Date(item.created_at).toLocaleDateString()}
               </p>
               <div className="flex flex-wrap gap-2">
-                {/* Edit Title (admin/editor) */}
                 {(isAdmin || isEditor) && (
                   <button
                     onClick={() => handleEdit(item)}
                     className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                   >
-                    Edit Title
+                    Edit
                   </button>
                 )}
 
-                {/* Admin approve button */}
                 {isAdmin && item.status === 'pending' && (
                   <button
                     onClick={() => handleApprove(item.id)}
@@ -199,7 +183,6 @@ const GalleryAdmin = () => {
                   </button>
                 )}
 
-                {/* Admin delete (for delete_requested) */}
                 {isAdmin && item.status === 'delete_requested' && (
                   <button
                     onClick={() => handleAdminDelete(item)}
@@ -209,7 +192,6 @@ const GalleryAdmin = () => {
                   </button>
                 )}
 
-                {/* Admin delete (any status) – optional, but we can keep for admins */}
                 {isAdmin && item.status !== 'delete_requested' && (
                   <button
                     onClick={() => handleAdminDelete(item)}
@@ -219,7 +201,6 @@ const GalleryAdmin = () => {
                   </button>
                 )}
 
-                {/* Editor request delete */}
                 {isEditor && !isAdmin && item.status !== 'delete_requested' && (
                   <button
                     onClick={() => handleRequestDelete(item.id)}
@@ -235,7 +216,7 @@ const GalleryAdmin = () => {
       </div>
 
       {items.length === 0 && (
-        <p className="text-center py-8 text-gray-500">No images in gallery yet.</p>
+        <p className="text-center py-8 text-gray-500">No gallery items yet.</p>
       )}
     </div>
   );

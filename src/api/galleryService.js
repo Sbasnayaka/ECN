@@ -1,8 +1,19 @@
 import { supabase } from './supabaseClient';
 
+/**
+ * Fetch all gallery items (admin only – includes pending/delete_requested)
+ */
+export const getAllGalleryItems = async () => {
+  const { data, error } = await supabase
+    .from('gallery')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data;
+};
 
 /**
- * Fetch all approved gallery images
+ * Fetch only approved gallery images (public frontend)
  */
 export const getGallery = async () => {
   const { data, error } = await supabase
@@ -16,24 +27,21 @@ export const getGallery = async () => {
 
 /**
  * Create a new gallery item
- * @param {Object} item - { title, image_url }
- * @returns {Promise<Object>}
+ * @param {Object} item - { title, image_url, sub_images, admin_note, status }
  */
 export const createGalleryItem = async (item) => {
-  // New items start with status 'pending'
   const { data, error } = await supabase
     .from('gallery')
-    .insert([{ ...item, status: 'pending' }])
+    .insert([item])
     .select();
   if (error) throw error;
   return data[0];
 };
 
 /**
- * Update a gallery item (e.g., change title)
+ * Update a gallery item
  * @param {string} id
- * @param {Object} updates - { title }
- * @returns {Promise<Object>}
+ * @param {Object} updates
  */
 export const updateGalleryItem = async (id, updates) => {
   const { data, error } = await supabase
@@ -70,19 +78,34 @@ export const requestGalleryDelete = async (id) => {
 };
 
 /**
- * Admin delete a gallery item (after approving delete request)
+ * Admin delete a gallery item (removes from DB and R2)
  * @param {string} id
- * @param {string} imageUrl - for R2 deletion
+ * @param {string} mainImageUrl
+ * @param {Array} subImageUrls
  */
-export const adminDeleteGalleryItem = async (id, imageUrl) => {
-  // Delete from R2
-  try {
-    const urlParts = imageUrl.split('/');
-    const key = urlParts.slice(3).join('/');
-    const { deleteImage } = await import('./r2Service');
-    await deleteImage(key);
-  } catch (err) {
-    console.warn('Failed to delete image from R2:', err);
+export const adminDeleteGalleryItem = async (id, mainImageUrl, subImageUrls = []) => {
+  // Delete main image from R2
+  if (mainImageUrl) {
+    try {
+      const urlParts = mainImageUrl.split('/');
+      const key = urlParts.slice(3).join('/');
+      const { deleteImage } = await import('./r2Service');
+      await deleteImage(key);
+    } catch (err) {
+      console.warn('Failed to delete main image from R2:', err);
+    }
+  }
+
+  // Delete sub-images from R2
+  for (const url of subImageUrls) {
+    try {
+      const urlParts = url.split('/');
+      const key = urlParts.slice(3).join('/');
+      const { deleteImage } = await import('./r2Service');
+      await deleteImage(key);
+    } catch (err) {
+      console.warn(`Failed to delete sub-image ${url}:`, err);
+    }
   }
 
   // Delete from database
@@ -93,30 +116,7 @@ export const adminDeleteGalleryItem = async (id, imageUrl) => {
   if (error) throw error;
 };
 
-
-/**
- * Delete a gallery item
- * @param {string} id - Gallery item ID
- * @param {string} imageUrl - Full image URL (to extract key for R2 deletion)
- */
+// Keep legacy delete for backward compatibility
 export const deleteGalleryItem = async (id, imageUrl) => {
-  // First delete from R2 (optional but recommended)
-  try {
-    // Extract key from URL (assuming public URL format: https://pub-xxx.r2.dev/gallery/filename.jpg)
-    const urlParts = imageUrl.split('/');
-    const key = urlParts.slice(3).join('/'); // Removes https://domain/ part
-    const { deleteImage } = await import('./r2Service');
-    await deleteImage(key);
-  } catch (err) {
-    console.warn('Failed to delete image from R2:', err);
-    // Continue with DB deletion even if R2 delete fails
-  }
-
-  // Then delete from database
-  const { error } = await supabase
-    .from('gallery')
-    .delete()
-    .eq('id', id);
-  if (error) throw error;
+  await adminDeleteGalleryItem(id, imageUrl, []);
 };
-
