@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import SectionHeader from "./SectionHeader";
 import LoadMoreBtn from "./LoadMoreBtn";
 import { getGallery } from "../api/galleryService";
+import { Link } from 'react-router-dom';
 
 const Gallery = () => {
   const [galleryItems, setGalleryItems] = useState([]);
@@ -52,9 +53,10 @@ const Gallery = () => {
       <SectionHeader theme="purple" title="ඡායාරූප ගැලරිය" />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6 mb-4">
         {visibleItems.map((photo) => (
-          <div
+          <Link
+            to={`/gallery/${photo.id}`}
             key={photo.id}
-            className="group cursor-pointer flex flex-col h-full bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+            className="group block cursor-pointer flex flex-col h-full bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow"
           >
             <div className="overflow-hidden">
               <img
@@ -71,7 +73,7 @@ const Gallery = () => {
                 {new Date(photo.created_at).toLocaleDateString()}
               </span>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
       {hasMore && (

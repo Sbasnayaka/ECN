@@ -16,6 +16,7 @@ const GalleryAdmin = () => {
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'pending', 'approved', 'delete_requested'
   const { profile } = useAuth();
 
   const isAdmin = profile?.role === 'admin';
@@ -114,6 +115,12 @@ const GalleryAdmin = () => {
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
 
+  // Filter items based on selected status
+  const filteredItems = items.filter(item => {
+    if (statusFilter === 'all') return true;
+    return item.status === statusFilter;
+  });
+
   if (loading) return <div className="text-center py-8">Loading gallery...</div>;
   if (error) return <div className="text-red-600 py-8">{error}</div>;
 
@@ -128,6 +135,36 @@ const GalleryAdmin = () => {
         )}
       </div>
 
+      {/* Status Filter Tabs */}
+      <div className="mb-6 border-b border-gray-200">
+        <nav className="-mb-px flex space-x-8">
+          <button
+            onClick={() => setStatusFilter('all')}
+            className={`pb-2 px-1 ${statusFilter === 'all' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            All
+          </button>
+          <button
+            onClick={() => setStatusFilter('pending')}
+            className={`pb-2 px-1 ${statusFilter === 'pending' ? 'border-b-2 border-yellow-500 text-yellow-600' : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            Pending
+          </button>
+          <button
+            onClick={() => setStatusFilter('approved')}
+            className={`pb-2 px-1 ${statusFilter === 'approved' ? 'border-b-2 border-green-500 text-green-600' : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            Approved
+          </button>
+          <button
+            onClick={() => setStatusFilter('delete_requested')}
+            className={`pb-2 px-1 ${statusFilter === 'delete_requested' ? 'border-b-2 border-red-500 text-red-600' : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            Delete Requests
+          </button>
+        </nav>
+      </div>
+
       {showForm && (
         <div className="mb-8">
           <GalleryForm
@@ -140,7 +177,7 @@ const GalleryAdmin = () => {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {items.map((item) => (
+        {filteredItems.map((item) => (
           <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden">
             <img src={item.image_url} alt={item.title} className="w-full h-48 object-cover" />
             <div className="p-4">
@@ -215,8 +252,8 @@ const GalleryAdmin = () => {
         ))}
       </div>
 
-      {items.length === 0 && (
-        <p className="text-center py-8 text-gray-500">No gallery items yet.</p>
+      {filteredItems.length === 0 && (
+        <p className="text-center py-8 text-gray-500">No gallery items in this status.</p>
       )}
     </div>
   );

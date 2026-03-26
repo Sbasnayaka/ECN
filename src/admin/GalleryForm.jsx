@@ -4,6 +4,7 @@ import { getUploadUrl, getPublicUrl } from '../api/r2Service';
 const GalleryForm = ({ item, onSubmit, onCancel, isAdmin }) => {
   const [formData, setFormData] = useState({
     title: '',
+    description: '',
     image_url: '',
     sub_images: [],
     admin_note: '',
@@ -19,6 +20,7 @@ const GalleryForm = ({ item, onSubmit, onCancel, isAdmin }) => {
     if (item) {
       setFormData({
         title: item.title || '',
+        description: item.description || '',
         image_url: item.image_url || '',
         sub_images: item.sub_images || [],
         admin_note: item.admin_note || '',
@@ -138,6 +140,18 @@ const GalleryForm = ({ item, onSubmit, onCancel, isAdmin }) => {
             ))}
           </div>
         )}
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Description (optional)</label>
+        <textarea
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          rows="5"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          placeholder="Describe the gallery item..."
+        />
       </div>
 
       <div className="mb-4">

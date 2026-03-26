@@ -24,6 +24,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
 import AdvertisingPolicy from './pages/AdvertisingPolicy';
 import YouTubeSettings from './admin/YouTubeSettings';
+import GalleryItemPage from './pages/GalleryItemPage';
 
 
 const Home = () => (
@@ -200,6 +201,7 @@ function App() {
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/advertising-policy" element={<AdvertisingPolicy />} />
+              <Route path="/gallery/:id" element={<GalleryItemPage />} />
             </Routes>
 
           </main>

@@ -120,3 +120,34 @@ export const adminDeleteGalleryItem = async (id, mainImageUrl, subImageUrls = []
 export const deleteGalleryItem = async (id, imageUrl) => {
   await adminDeleteGalleryItem(id, imageUrl, []);
 };
+
+/**
+ * Fetch a single gallery item by ID
+ * @param {string} id
+ */
+export const getGalleryItemById = async (id) => {
+  const { data, error } = await supabase
+    .from('gallery')
+    .select('*')
+    .eq('id', id)
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const incrementGalleryViewCount = async (id) => {
+  const { error } = await supabase.rpc('increment_gallery_view', { gallery_id: id });
+  if (error) console.error('Failed to increment gallery view count:', error);
+};
+
+export const getRelatedGalleryItems = async (currentId, limit = 6) => {
+  const { data, error } = await supabase
+    .from('gallery')
+    .select('*')
+    .eq('status', 'approved')
+    .neq('id', currentId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return data;
+};
