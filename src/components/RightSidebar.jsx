@@ -5,6 +5,7 @@ import VerticalNewsCard from './VerticalNewsCard';
 import LoadMoreBtn from './LoadMoreBtn';
 import AdSlot from './AdSlot';
 import ytIcon from '../assets/icons/youtube.png';
+import { getSettings } from '../api/settingsService';
 
 const RightSidebar = () => {
   const [gossipArticles, setGossipArticles] = useState([]);
@@ -19,8 +20,23 @@ const RightSidebar = () => {
   const [roosarArticles, setRoosarArticles] = useState([]);
   const [roosarOffset, setRoosarOffset] = useState(0);
   const [roosarHasMore, setRoosarHasMore] = useState(true);
+  const [youtubeEnabled, setYoutubeEnabled] = useState(true);
+  const [youtubeEmbedUrl, setYoutubeEmbedUrl] = useState('');
 
   const SECTION_LIMIT = 8;
+
+  useEffect(() => {
+    const fetchYouTubeSettings = async () => {
+      try {
+        const settings = await getSettings(['youtube_widget_enabled', 'youtube_embed_url']);
+        setYoutubeEnabled(settings.youtube_widget_enabled === 'true');
+        setYoutubeEmbedUrl(settings.youtube_embed_url || '');
+      } catch (err) {
+        console.error('Failed to fetch YouTube settings:', err);
+      }
+    };
+    fetchYouTubeSettings();
+  }, []);
 
   useEffect(() => {
     const fetchInitial = async () => {
@@ -75,16 +91,32 @@ const RightSidebar = () => {
   return (
     <aside className="w-full flex flex-col gap-8">
       {/* YouTube Section */}
-      <div className="bg-[#e0f2fe] border border-blue-200 p-6 flex flex-col items-center justify-center text-center shadow-sm">
-        <div className="w-16 h-16 mb-3 opacity-90">
-          <img src={ytIcon} alt="YouTube" className="w-full h-full object-contain filter drop-shadow-md" />
+      {youtubeEnabled && (
+        <div className="bg-[#e0f2fe] border border-blue-200 p-6 flex flex-col items-center justify-center text-center shadow-sm">
+          <div className="w-16 h-16 mb-3 opacity-90">
+            <img src={ytIcon} alt="YouTube" className="w-full h-full object-contain filter drop-shadow-md" />
+          </div>
+          <h3 className="text-lg font-bold text-ecn-navy mb-2">youtube channel video drop down section</h3>
+          <p className="text-sm text-gray-600 mb-4 font-noto">අපගේ නිල යූටියුබ් නාලිකාව සමග එක්වන්න</p>
+          {youtubeEmbedUrl ? (
+            <div className="w-full">
+              <iframe
+                src={youtubeEmbedUrl}
+                title="YouTube Video"
+                className="w-full h-48 rounded"
+                allowFullScreen
+              ></iframe>
+            </div>
+          ) : (
+            <a
+              href="#"
+              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full text-sm font-bold transition-colors shadow"
+            >
+              Subscribe Now
+            </a>
+          )}
         </div>
-        <h3 className="text-lg font-bold text-ecn-navy mb-2">youtube channel video drop down section</h3>
-        <p className="text-sm text-gray-600 mb-4 font-noto">අපගේ නිල යූටියුබ් නාලිකාව සමග එක්වන්න</p>
-        <a href="#" className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full text-sm font-bold transition-colors shadow">
-          Subscribe Now
-        </a>
-      </div>
+      )}
 
       {/* Gossip */}
       <div className="flex flex-col bg-white border border-gray-100 shadow-sm">

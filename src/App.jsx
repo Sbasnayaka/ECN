@@ -23,6 +23,7 @@ import TopBannerSlider from "./components/TopBannerSlider";
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
 import AdvertisingPolicy from './pages/AdvertisingPolicy';
+import YouTubeSettings from './admin/YouTubeSettings';
 
 
 const Home = () => (
@@ -176,6 +177,12 @@ function App() {
                 <Route path="gallery" element={
                   <ProtectedRoute allowedRoles={['admin', 'editor']}>
                     <GalleryAdmin />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="youTubeSettings" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <YouTubeSettings />
                   </ProtectedRoute>
                 } />
 
