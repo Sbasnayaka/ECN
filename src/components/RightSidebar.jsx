@@ -26,17 +26,20 @@ const RightSidebar = () => {
   const SECTION_LIMIT = 8;
 
   useEffect(() => {
-    const fetchYouTubeSettings = async () => {
-      try {
-        const settings = await getSettings(['youtube_widget_enabled', 'youtube_embed_url']);
-        setYoutubeEnabled(settings.youtube_widget_enabled === 'true');
-        setYoutubeEmbedUrl(settings.youtube_embed_url || '');
-      } catch (err) {
-        console.error('Failed to fetch YouTube settings:', err);
-      }
-    };
-    fetchYouTubeSettings();
-  }, []);
+    console.log('YouTube settings fetch effect started');
+  const fetchYouTubeSettings = async () => {
+    console.log('Fetching YouTube settings...');
+    try {
+      const settings = await getSettings(['youtube_widget_enabled', 'youtube_embed_url']);
+      console.log('YouTube settings fetched:', settings);
+      setYoutubeEnabled(settings.youtube_widget_enabled === 'true');
+      setYoutubeEmbedUrl(settings.youtube_embed_url || '');
+    } catch (err) {
+      console.error('Failed to fetch YouTube settings:', err);
+    }
+  };
+  fetchYouTubeSettings();
+}, []);
 
   useEffect(() => {
     const fetchInitial = async () => {
@@ -87,7 +90,7 @@ const RightSidebar = () => {
       console.error(`Failed to load more ${section}:`, err);
     }
   };
-
+console.log('Rendering RightSidebar, youtubeEnabled:', youtubeEnabled);
   return (
     <aside className="w-full flex flex-col gap-8">
       {/* YouTube Section */}
