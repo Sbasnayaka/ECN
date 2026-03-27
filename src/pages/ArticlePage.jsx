@@ -152,19 +152,19 @@ const ArticlePage = () => {
                 <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center justify-between gap-4 text-sm text-gray-500 border-t border-b border-gray-100 py-3 mt-4">
                   <div className="flex flex-wrap items-center gap-4">
                     <span className="font-bold text-ecn-navy flex items-center gap-1">
-                      ✍️
+                      
                       <Link
                         to={`/author/${article.author_id}`}
                         className="hover:text-blue-600 transition-colors"
                       >
                         {article?.author_display_name || "ප්‍රවෘත්ති අංශය"}
-                      </Link>
+                      </Link>ᝰ.ᐟ
                     </span>
-                    <span className="flex items-center gap-1">
-                      🕒 {formatPublishedDate(article.published_at || article.created_at)}
+                    <span className="flex items-center gap-1 font-bold">
+                       {formatPublishedDate(article.published_at || article.created_at)}
                     </span>
-                    <span className="flex items-center gap-1">
-                      👁️ {article.view_count || 0} views
+                    <span className="flex items-center gap-1 font-bold">
+                      👁 {article.view_count || 8} views
                     </span>
                   </div>
                   <div className="flex gap-2">

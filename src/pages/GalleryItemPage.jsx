@@ -150,7 +150,7 @@ const GalleryItemPage = () => {
                        {formatPublishedDate(item.created_at)}
                     </span>
                     <span className="flex items-center gap-1 font-bold">
-                       👁 {item.view_count || 2} 
+                       👁 {item.view_count || 2} views
                     </span>
                   </div>
                   <div className="flex gap-2">
