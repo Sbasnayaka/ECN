@@ -6,6 +6,8 @@ const CategoryForm = ({ category, onSubmit, onCancel }) => {
     slug: '',
     theme_color: '#000000',
     section_type: '',
+    is_in_nav: true,           // new field
+    nav_order: 0,              // new field
   });
 
   useEffect(() => {
@@ -15,13 +17,18 @@ const CategoryForm = ({ category, onSubmit, onCancel }) => {
         slug: category.slug || '',
         theme_color: category.theme_color || '#000000',
         section_type: category.section_type || '',
+        is_in_nav: category.is_in_nav ?? true,
+        nav_order: category.nav_order ?? 0,
       });
     }
   }, [category]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
   };
 
   const handleSubmit = (e) => {
@@ -32,7 +39,7 @@ const CategoryForm = ({ category, onSubmit, onCancel }) => {
   return (
     <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">{category ? 'Edit Category' : 'Add New Category'}</h2>
-      
+
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-1">Name (Sinhala)</label>
         <input
@@ -41,7 +48,7 @@ const CategoryForm = ({ category, onSubmit, onCancel }) => {
           value={formData.name}
           onChange={handleChange}
           required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md"
         />
       </div>
 
@@ -53,7 +60,7 @@ const CategoryForm = ({ category, onSubmit, onCancel }) => {
           value={formData.slug}
           onChange={handleChange}
           required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md"
         />
         <p className="text-xs text-gray-500 mt-1">e.g., "politics" (lowercase, hyphens)</p>
       </div>
@@ -75,12 +82,37 @@ const CategoryForm = ({ category, onSubmit, onCancel }) => {
           name="section_type"
           value={formData.section_type}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md"
         >
           <option value="">Select type</option>
           <option value="main_feed">Main Feed</option>
           <option value="sidebar">Sidebar</option>
         </select>
+      </div>
+
+      <div className="mb-4 flex items-center gap-4">
+        <label className="inline-flex items-center">
+          <input
+            type="checkbox"
+            name="is_in_nav"
+            checked={formData.is_in_nav}
+            onChange={handleChange}
+            className="mr-2"
+          />
+          Show in Navigation Bar
+        </label>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Navigation Order</label>
+          <input
+            type="number"
+            name="nav_order"
+            value={formData.nav_order}
+            onChange={handleChange}
+            className="w-24 px-3 py-2 border border-gray-300 rounded-md"
+          />
+          <p className="text-xs text-gray-500">Lower numbers appear first</p>
+        </div>
       </div>
 
       <div className="flex justify-end gap-3">

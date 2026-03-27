@@ -54,3 +54,16 @@ export const deleteCategory = async (id) => {
     .eq('id', id);
   if (error) throw error;
 };
+
+/**
+ * Fetch categories that should appear in the navigation bar, ordered by nav_order
+ */
+export const getNavCategories = async () => {
+  const { data, error } = await supabase
+    .from('categories')
+    .select('id, name, slug')
+    .eq('is_in_nav', true)
+    .order('nav_order', { ascending: true });
+  if (error) throw error;
+  return data;
+};

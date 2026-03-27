@@ -2,11 +2,34 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logoImg from "../assets/logo.jpeg";
 import searchIcon from "../assets/icons/search.png";
+import { getNavCategories } from "../api/categoryService";
 
 const Navigation = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [navLinks, setNavLinks] = useState([]);
 
+  // Fetch navigation categories on mount
+  useEffect(() => {
+    const fetchNavLinks = async () => {
+      try {
+        const categories = await getNavCategories();
+        // Add home link manually (always first)
+        const links = [
+          { name: "මුල් පිටුව", path: "/" },
+          ...categories.map(cat => ({ name: cat.name, path: `/${cat.slug}` }))
+        ];
+        setNavLinks(links);
+      } catch (err) {
+        console.error("Failed to load navigation categories:", err);
+        // Fallback to a minimal set if fetch fails
+        setNavLinks([{ name: "මුල් පිටුව", path: "/" }]);
+      }
+    };
+    fetchNavLinks();
+  }, []);
+
+  // Clock update effect
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
@@ -29,23 +52,9 @@ const Navigation = () => {
     });
   };
 
-  const navLinks = [
-    { name: "මුල් පිටුව", path: "/" },
-    { name: "ප්‍රධාන පුවත්", path: "/main-news" },
-    { name: "අලුත් පුවත්", path: "/latest" },
-    { name: "දේශීය පුවත්", path: "/local" },
-    { name: "ගොසිප්", path: "/gossip" },
-    { name: "දේශපාලන", path: "/politics" },
-    { name: "ව්‍යාපාරික", path: "/business" },
-    { name: "ක්‍රීඩා", path: "/sports" },
-    { name: "කලාව", path: "/arts" },
-    { name: "විදෙස්", path: "/world" },
-    { name: "පුස්තකාලය", path: "/library" },
-  ];
-
   return (
     <header className="sticky top-0 z-50 shadow-md">
-      {/* Top Bar – Date, Time, Weather, Ad Contact – compact, no border */}
+      {/* Top Bar – unchanged */}
       <div className="hidden md:block bg-[#000061] text-gray-300 py-1 text-xs">
         <div className="max-w-[1400px] mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-1">
           <div className="flex items-center gap-1">
@@ -80,7 +89,7 @@ const Navigation = () => {
       <div className="bg-[#000080] w-full text-white">
         <div className="max-w-[1400px] mx-auto px-4">
           <div className="flex items-center justify-between py-1 min-h-[56px]">
-            {/* Logo – left on all devices, larger */}
+            {/* Logo */}
             <Link to="/" className="shrink-0">
               <img
                 src={logoImg}
@@ -90,7 +99,7 @@ const Navigation = () => {
               />
             </Link>
 
-            {/* Desktop Navigation Links (hidden on mobile) – smaller font */}
+            {/* Desktop Navigation Links */}
             <nav className="hidden md:flex items-center gap-x-0.5 flex-1 justify-end">
               {navLinks.map((link) => (
                 <Link
@@ -103,7 +112,7 @@ const Navigation = () => {
               ))}
             </nav>
 
-            {/* Mobile: Right icons (Search + Hamburger) */}
+            {/* Mobile icons */}
             <div className="flex items-center gap-2 md:hidden">
               <button className="p-1 text-white" aria-label="Search">
                 <img

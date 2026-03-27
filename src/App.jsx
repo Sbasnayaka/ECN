@@ -56,7 +56,7 @@ function App() {
       {/* Outer gray background bounding the whole viewport */}
       <div className="min-h-screen flex justify-center bg-gray-200 text-ecn-black">
         {/* Inner white centered container that mimics the Dasatha Lanka layout box */}
-        <div className="w-full max-w-[1200px] bg-white flex flex-col shadow-2xl min-h-screen overflow-hidden">
+        <div className="w-full max-w-[1200px] bg-white flex flex-col shadow-2xl min-h-screen">
           <Navigation />
           <NewsTicker />
           <div className="w-full pt-4 md:pt-6 bg-white">
