@@ -105,7 +105,7 @@ const Navigation = () => {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className="px-1 py-0.5 text-[10px] lg:text-[11px] font-bold whitespace-nowrap rounded hover:bg-[#000061] hover:text-blue-200 transition-all"
+                  className="px-1 py-0.5 text-[10px] lg:text-[11px] font-bold whitespace-nowrap rounded hover:bg-[#fecb29] hover:text-[#000080] transition-all"
                 >
                   {link.name}
                 </Link>
