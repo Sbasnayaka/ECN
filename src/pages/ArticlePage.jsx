@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import DOMPurify from 'dompurify';
 import RightSidebar from "../components/RightSidebar";
 import { getArticleById, incrementViewCount, getRelatedArticles } from "../api/articleService";
-import { getAds } from "../api/adService";
+import { getAdsByPosition } from "../api/adService";
 import adBannerImg from "../assets/Top Advertisement  Banner.webp";
 import bottomBannerImg from "../assets/single page advertisement bottom banner.jpg";
 
@@ -34,17 +34,18 @@ const ArticlePage = () => {
       const related = await getRelatedArticles(id, data.category_id);
       setRelatedArticles(related);
 
-      // Fetch ads
-      const allAds = await getAds();
-      const activeTopAds = allAds.filter(
-        (ad) => ad.is_active && (ad.position === 'inline_news' || ad.position === 'top_banner')
-      );
-      setTopAds(activeTopAds.slice(0, 3));
+      // Fetch the three header bottom ads (exactly as on the homepage)
+      const positions = ['header_bottom_1', 'header_bottom_2', 'header_bottom_3'];
+      const fetchedAds = [];
+      for (const pos of positions) {
+        const ads = await getAdsByPosition(pos);
+        fetchedAds.push(ads[0] || null);
+      }
+      setTopAds(fetchedAds.filter(ad => ad !== null));
 
-      const activeBottomAd = allAds.find(
-        (ad) => ad.is_active && ad.position === 'bottom_banner'
-      );
-      setBottomAd(activeBottomAd || null);
+      // Fetch bottom banner
+      const bottomAds = await getAdsByPosition('bottom_banner');
+      setBottomAd(bottomAds[0] || null);
     } catch (err) {
       console.error("Failed to load article:", err);
       setError("Article not found or failed to load.");
@@ -86,7 +87,12 @@ const ArticlePage = () => {
   return (
     <div className="w-full">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Top Advertisement Banners — 3-column grid (before breadcrumb) */}
+        
+
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left Column: Full Article Reading Area */}
+          <div className="lg:w-2/3 flex flex-col gap-6">
+          {/* Top Advertisement Banners — 3-column grid (before breadcrumb) */}
         <div className="w-full grid grid-cols-3 gap-1 sm:gap-3 mb-4">
           {topAds.length > 0 ? (
             topAds.map((ad, idx) => (
@@ -106,7 +112,7 @@ const ArticlePage = () => {
               </div>
             ))
           ) : (
-            // Fallback to static images
+            // Fallback static images (same as homepage)
             <>
               <img src={adBannerImg} alt="Advertisement" className="w-full h-auto object-contain shadow-sm rounded-sm" />
               <img src={adBannerImg} alt="Advertisement" className="w-full h-auto object-contain shadow-sm rounded-sm" />
@@ -115,27 +121,24 @@ const ArticlePage = () => {
           )}
         </div>
 
-        {/* Breadcrumb Navigation */}
-        <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 mb-4 font-medium">
-          <Link to="/" className="hover:text-ecn-navy transition-colors">
-            මුල් පිටුව
-          </Link>
-          <span>/</span>
-          <Link
-            to={`/${article.categories?.slug || ''}`}
-            className="hover:text-ecn-navy transition-colors"
-          >
-            {article.categories?.name || "පුවත්"}
-          </Link>
-          <span>/</span>
-          <span className="text-gray-400">පුවත</span>
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Left Column: Full Article Reading Area */}
-          <div className="lg:w-2/3 flex flex-col gap-6">
             {/* Main Article Card */}
             <div className="bg-white p-5 md:p-8 shadow-sm border border-gray-100 rounded-lg">
+              
+            {/* Breadcrumb Navigation */}
+            <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 mb-4 font-medium">
+            <Link to="/" className="hover:text-ecn-navy transition-colors">
+              මුල් පිටුව
+            </Link>
+            <span>/</span>
+            <Link
+              to={`/${article.categories?.slug || ''}`}
+              className="hover:text-ecn-navy transition-colors"
+            >
+              {article.categories?.name || "පුවත්"}
+            </Link>
+            <span>/</span>
+            <span className="text-gray-400">පුවත</span>
+            </div>
               {/* Article Header */}
               <header className="mb-6">
                 <span className="bg-blue-600 text-white text-[11px] px-2 py-1 font-bold inline-block mb-3 rounded-sm uppercase tracking-wide">
