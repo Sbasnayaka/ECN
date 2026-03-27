@@ -54,10 +54,16 @@ const AdminLayout = () => {
             {profile?.role === 'admin' && (
               <li>
                 <Link to="/admin/ads" className="block p-2 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
-                  Advertisements
+                  Ad Dashboard
                 </Link>
               </li>
             )}
+
+            <li>
+              <Link to="/admin/ad-dashboard" className="block p-2 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+                Advertisements
+              </Link>
+            </li>
 
             {/* Gallery – all (since editors can upload) */}
             <li>

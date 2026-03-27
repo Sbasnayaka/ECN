@@ -25,6 +25,7 @@ import Terms from './pages/Terms';
 import AdvertisingPolicy from './pages/AdvertisingPolicy';
 import YouTubeSettings from './admin/YouTubeSettings';
 import GalleryItemPage from './pages/GalleryItemPage';
+import AdDashboard from './admin/AdDashboard';
 
 
 const Home = () => (
@@ -172,6 +173,12 @@ function App() {
                 <Route path="ads" element={
                   <ProtectedRoute allowedRoles={['admin']}>
                     <Ads />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="ad-dashboard" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdDashboard />
                   </ProtectedRoute>
                 } />
 

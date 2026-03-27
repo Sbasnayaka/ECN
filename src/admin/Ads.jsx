@@ -78,15 +78,7 @@ const Ads = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Advertisements Management</h1>
-        {isAdmin && (
-          <button
-            onClick={handleCreate}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            + Add New Ad
-          </button>
-        )}
+        <h1 className="text-3xl font-bold">All Advertisements </h1>
       </div>
 
       {showForm && (

@@ -7,6 +7,7 @@ import HorizontalNewsCard from './HorizontalNewsCard';
 import VerticalNewsCard from './VerticalNewsCard';
 import LoadMoreBtn from './LoadMoreBtn';
 import videoLoopGif from '../assets/WEB-SIZE-VIDEO-LOOP.gif';
+import { getGifUrl } from '../api/settingsService';
 
 const NewsFeed = () => {
   // Section states
@@ -28,12 +29,21 @@ const NewsFeed = () => {
   const [foreignArticles, setForeignArticles] = useState([]);
   const [foreignOffset, setForeignOffset] = useState(0);
   const [foreignHasMore, setForeignHasMore] = useState(true);
+  const [gifUrl, setGifUrl] = useState(videoLoopGif);
 
   const [loading, setLoading] = useState(true);
 
   // Define limits per section
   const HOT_LIMIT = 20;
   const SECTION_LIMIT = 4;
+
+  useEffect(() => {
+  const fetchGif = async () => {
+    const gif = await getGifUrl();
+    if (gif) setGifUrl(gif);
+  };
+  fetchGif();
+}, []);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -116,24 +126,20 @@ const NewsFeed = () => {
 
   return (
     <div className="flex flex-col gap-8 w-full">
-      {/* 3 Small Ads (positions medium_1, medium_2, medium_3) */}
+      {/* 3 Small Ads (header bottom grid) */}
       <div className="grid grid-cols-3 gap-4">
-        <AdSlot position="medium_1" className="w-full" fallback={
-          <div className="w-full bg-[#e8f4f8] border border-blue-200 flex items-center justify-center shadow-sm overflow-hidden p-4 h-[100px]">
-            <span className="text-gray-500 text-sm">Ad Space</span>
-          </div>
-        } />
-        <AdSlot position="medium_2" className="w-full" fallback={
-          <div className="w-full bg-[#e8f4f8] border border-blue-200 flex items-center justify-center shadow-sm overflow-hidden p-4 h-[100px]">
-            <span className="text-gray-500 text-sm">Ad Space</span>
-          </div>
-        } />
-        <AdSlot position="medium_3" className="w-full" fallback={
-          <div className="w-full bg-[#e8f4f8] border border-blue-200 flex items-center justify-center shadow-sm overflow-hidden p-4 h-[100px]">
-            <span className="text-gray-500 text-sm">Ad Space</span>
-          </div>
-        } />
-      </div>
+      <AdSlot position="header_bottom_1" className="w-full" fallback={
+      <div className="w-full bg-[#e8f4f8] border border-blue-200 flex items-center justify-center shadow-sm overflow-hidden p-4 h-[100px]">
+      <span className="text-gray-500 text-sm">Ad Space</span>
+    </div>
+  } />
+  <AdSlot position="header_bottom_2" className="w-full" fallback={<div className="w-full bg-[#e8f4f8] border border-blue-200 flex items-center justify-center shadow-sm overflow-hidden p-4 h-[100px]">
+      <span className="text-gray-500 text-sm">Ad Space</span>
+    </div>} />
+  <AdSlot position="header_bottom_3" className="w-full" fallback={<div className="w-full bg-[#e8f4f8] border border-blue-200 flex items-center justify-center shadow-sm overflow-hidden p-4 h-[100px]">
+      <span className="text-gray-500 text-sm">Ad Space</span>
+    </div>} />
+</div>
 
       {/* Video Loop GIF */}
       <div className="w-full relative rounded overflow-hidden shadow-sm">

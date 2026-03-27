@@ -49,6 +49,8 @@ const CategoryPage = ({ categoryName, categorySlug }) => {
         <div className="mb-8 border-b-4 border-ecn-navy pb-4">
           <h1 className="text-3xl md:text-4xl font-black text-ecn-dark-blue">{categoryName}</h1>
         </div>
+        {/* Category-specific banner */}
+        <AdSlot position={`${categorySlug}_banner`} className="mb-6" />
 
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="lg:w-2/3 flex flex-col gap-6">

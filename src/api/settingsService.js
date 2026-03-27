@@ -45,3 +45,6 @@ export const getSettings = async (keys) => {
   data?.forEach(item => { result[item.key] = item.value; });
   return result;
 };
+
+export const getGifUrl = async () => getSetting('news_loop_gif');
+export const setGifUrl = async (url) => setSetting('news_loop_gif', url);
