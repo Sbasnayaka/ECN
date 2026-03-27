@@ -157,7 +157,7 @@ const ArticlePage = () => {
                         to={`/author/${article.author_id}`}
                         className="hover:text-blue-600 transition-colors"
                       >
-                        {article.profiles?.name || "ප්‍රවෘත්ති අංශය"}
+                        {article?.author_display_name || "ප්‍රවෘත්ති අංශය"}
                       </Link>
                     </span>
                     <span className="flex items-center gap-1">
