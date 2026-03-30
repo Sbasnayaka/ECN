@@ -70,6 +70,21 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
     }
   };
 
+  const uploadEditorImage = async (blobInfo) => {
+    const blob = blobInfo.blob();
+    const safeName = blobInfo.filename().replace(/[^a-zA-Z0-9.-]/g, '');
+    const key = `articles/content/${Date.now()}-${safeName}`;
+    const uploadUrl = await getUploadUrl(key, blob.type);
+    const response = await fetch(uploadUrl, {
+      method: 'PUT',
+      body: blob,
+      headers: { 'Content-Type': blob.type },
+    });
+    if (!response.ok) throw new Error('Inline image upload failed');
+    return getPublicUrl(key);
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -257,13 +272,23 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
         <label className="block text-sm font-medium text-gray-700 mb-1">Content</label>
         <Editor
           apiKey="kki12gk5xv0oz46zpx7xfnxtgj4i2mlddgzrg1ne3ulo6zrw"
-          initialValue={formData.content}
+          value={formData.content}
           init={{
             height: 500,
-            menubar: false,
-            plugins: 'advlist autolink lists link image charmap preview anchor',
-            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat',
-            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }'
+            menubar: true,
+            plugins: [
+              'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
+              'preview', 'anchor', 'searchreplace', 'visualblocks',
+              'code', 'fullscreen', 'insertdatetime', 'media', 'table',
+              'wordcount'
+            ],
+            toolbar:
+              'undo redo | blocks | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media table | removeformat code preview',
+            automatic_uploads: true,
+            images_upload_handler: uploadEditorImage,
+            image_title: true,
+            file_picker_types: 'image',
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px; line-height:1.7; } img { max-width:100%; height:auto; }',
           }}
           onEditorChange={handleEditorChange}
         />

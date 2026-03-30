@@ -199,7 +199,14 @@ const ArticlePage = () => {
                   // Check if content contains HTML tags
                   const isHtml = /<[a-z][\s\S]*>/i.test(content);
                   if (isHtml) {
-                    const sanitizedHtml = DOMPurify.sanitize(content);
+                    const sanitizedHtml = DOMPurify.sanitize(content, {
+                      ADD_TAGS: ['iframe', 'video', 'source'],
+                      ADD_ATTR: [
+                        'allow', 'allowfullscreen', 'frameborder', 'scrolling',
+                        'src', 'title', 'width', 'height',
+                        'controls', 'controlslist', 'poster', 'playsinline', 'preload',
+                      ],
+                    });
                     return <div dangerouslySetInnerHTML={{ __html: sanitizedHtml }} />;
                   } else {
                     // Plain text with paragraphs separated by \n\n
