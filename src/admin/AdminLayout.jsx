@@ -80,6 +80,14 @@ const AdminLayout = () => {
               </li>
             )}
 
+            {profile?.role === 'admin' && (
+              <li>
+                <Link to="/admin/create-editor" className="block p-2 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+                  Create Editor Account
+                </Link>
+              </li>
+            )}
+
             {/* Change Password – all */}
             <li>
               <Link to="/admin/change-password" className="block p-2 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">

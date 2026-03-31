@@ -26,7 +26,7 @@ import AdvertisingPolicy from './pages/AdvertisingPolicy';
 import YouTubeSettings from './admin/YouTubeSettings';
 import GalleryItemPage from './pages/GalleryItemPage';
 import AdDashboard from './admin/AdDashboard';
-
+import CreateEditor from './admin/CreateEditor';
 
 const Home = () => (
   <div className="w-full">
@@ -191,6 +191,12 @@ function App() {
                 <Route path="youTubeSettings" element={
                   <ProtectedRoute allowedRoles={['admin']}>
                     <YouTubeSettings />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="create-editor" element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <CreateEditor />
                   </ProtectedRoute>
                 } />
 

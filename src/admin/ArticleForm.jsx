@@ -6,6 +6,9 @@ import { useAuth } from '../context/AuthContext';
 const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
   const { profile } = useAuth();
   const isEditor = profile?.role === 'editor';
+  const isAdmin = profile?.role === 'admin';
+  const isNewArticle = !article; // if no article passed, it's a new article
+
   const [formData, setFormData] = useState({
     title: '',
     excerpt: '',
@@ -26,7 +29,6 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
   useEffect(() => {
     if (article) {
       let contentValue = article.content || '';
-      // If content is plain text (no HTML tags), convert to HTML for the editor
       if (!contentValue.includes('<') && !contentValue.includes('>')) {
         contentValue = contentValue.split('\n\n').map(para => `<p>${para.trim()}</p>`).join('');
       }
@@ -44,8 +46,14 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
         published_at: article.published_at || null,
       });
       setPreview(article.image_url || '');
+    } else {
+      // New article: auto-assign author from logged-in user
+      setFormData(prev => ({
+        ...prev,
+        author_id: profile?.id || '',
+      }));
     }
-  }, [article]);
+  }, [article, profile]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -57,7 +65,7 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
 
   const handleEditorChange = (content) => {
     setFormData(prev => ({ ...prev, content }));
-    console.log('Editor content updated:', content); // add this log temporarily
+    console.log('Editor content updated:', content);
   };
 
   const handleFileChange = (e) => {
@@ -84,11 +92,9 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
     return getPublicUrl(key);
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Build a plain object copy so we never mutate React state directly
     const submitData = { ...formData };
 
     if (file) {
@@ -174,21 +180,24 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
             </select>
           </div>
 
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Author</label>
-            <select
-              name="author_id"
-              value={formData.author_id}
-              onChange={handleChange}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            >
-              <option value="">Select author</option>
-              {authors.map(author => (
-                <option key={author.id} value={author.id}>{author.name}</option>
-              ))}
-            </select>
-          </div>
+          {/* Author field – hidden for new articles, visible for admin when editing */}
+          {!isNewArticle && isAdmin && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Author</label>
+              <select
+                name="author_id"
+                value={formData.author_id}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              >
+                <option value="">Select author</option>
+                {authors.map(author => (
+                  <option key={author.id} value={author.id}>{author.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">Display Name (optional)</label>

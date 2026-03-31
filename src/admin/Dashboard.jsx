@@ -34,7 +34,6 @@ const Dashboard = () => {
         getGallery(),
       ]);
 
-      // Calculate stats
       const published = articles.filter(a => a.status === 'published').length;
       const pending = articles.filter(a => a.status === 'pending').length;
       const draft = articles.filter(a => a.status === 'draft').length;
@@ -51,7 +50,6 @@ const Dashboard = () => {
         galleryImages: gallery.length,
       });
 
-      // Get 5 most recent articles (by created_at)
       const sorted = [...articles].sort((a, b) => 
         new Date(b.created_at) - new Date(a.created_at)
       ).slice(0, 5);
@@ -179,8 +177,36 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* Recent Articles */}
-      <div className="bg-white rounded-lg shadow p-6">
+      {/* Quick Actions */}
+      <div className="mt-8">
+        <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
+        <div className="flex gap-4">
+          <Link
+            to="/admin/articles"
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            + Create Article
+          </Link>
+          {/* Only show Add Advertisement if user is admin */}
+          {profile?.role === 'admin' && (
+            <Link
+              to="/admin/ad-dashboard"
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            >
+              + Add Advertisement
+            </Link>
+          )}
+          <Link
+            to="/admin/gallery"
+            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+          >
+            + Upload to Gallery
+          </Link>
+        </div>
+      </div>
+
+      {/* Recent Articles (moved down) */}
+      <div className="bg-white rounded-lg shadow p-6 mt-8">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Recent Articles</h2>
           <Link to="/admin/articles" className="text-blue-600 hover:text-blue-800 text-sm">
@@ -225,35 +251,6 @@ const Dashboard = () => {
         ) : (
           <p className="text-gray-500">No articles yet.</p>
         )}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="mt-8">
-        <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
-        <div className="flex gap-4">
-          <Link
-            to="/admin/articles"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            onClick={() => {
-              // You could trigger "create new" via state if needed
-              // For now, just navigate to articles page
-            }}
-          >
-            + Create Article
-          </Link>
-          <Link
-            to="/admin/ads"
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-          >
-            + Add Advertisement
-          </Link>
-          <Link
-            to="/admin/gallery"
-            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
-          >
-            + Upload to Gallery
-          </Link>
-        </div>
       </div>
     </div>
   );
