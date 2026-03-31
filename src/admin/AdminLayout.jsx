@@ -72,6 +72,12 @@ const AdminLayout = () => {
               </Link>
             </li>
 
+            <li>
+              <Link to="/admin/comments" className="block p-2 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">
+                Manage Comments
+              </Link>
+            </li>
+
             {profile?.role === 'admin' && (
               <li>
                 <Link to="/admin/youTubeSettings" className="block p-2 rounded hover:bg-blue-50 text-gray-700 hover:text-blue-600">

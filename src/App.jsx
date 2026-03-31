@@ -27,6 +27,7 @@ import YouTubeSettings from './admin/YouTubeSettings';
 import GalleryItemPage from './pages/GalleryItemPage';
 import AdDashboard from './admin/AdDashboard';
 import CreateEditor from './admin/CreateEditor';
+import Comments from './admin/Comments';
 
 const Home = () => (
   <div className="w-full">
@@ -167,6 +168,12 @@ function App() {
                 <Route path="articles" element={
                   <ProtectedRoute allowedRoles={['admin', 'editor']}>
                     <Articles />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="comments" element={
+                  <ProtectedRoute allowedRoles={['admin', 'editor']}>
+                    <Comments />
                   </ProtectedRoute>
                 } />
 

@@ -6,6 +6,8 @@ import { getArticleById, incrementViewCount, getRelatedArticles } from "../api/a
 import { getAdsByPosition } from "../api/adService";
 import adBannerImg from "../assets/Top Advertisement  Banner.webp";
 import bottomBannerImg from "../assets/single page advertisement bottom banner.jpg";
+import Turnstile from 'react-turnstile';
+import { getCommentsByArticle, submitComment } from '../api/commentService';
 
 const ArticlePage = () => {
   const { id } = useParams();
@@ -15,6 +17,11 @@ const ArticlePage = () => {
   const [bottomAd, setBottomAd] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [commentForm, setCommentForm] = useState({ name: '', email: '', phone: '', content: '' });
+  const [commentSubmitting, setCommentSubmitting] = useState(false);
+  const [commentMessage, setCommentMessage] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -33,6 +40,9 @@ const ArticlePage = () => {
 
       const related = await getRelatedArticles(id, data.category_id);
       setRelatedArticles(related);
+
+      const commentsData = await getCommentsByArticle(id);
+      setComments(commentsData);
 
       // Fetch the three header bottom ads (exactly as on the homepage)
       const positions = ['header_bottom_1', 'header_bottom_2', 'header_bottom_3'];
@@ -83,6 +93,34 @@ const ArticlePage = () => {
       </div>
     );
   }
+
+  const handleCommentChange = (e) => {
+  setCommentForm({ ...commentForm, [e.target.name]: e.target.value });
+  };
+
+  const handleCommentSubmit = async (e) => {
+  e.preventDefault();
+  if (!turnstileToken) {
+    setCommentMessage('Please complete the verification.');
+    return;
+  }
+  setCommentSubmitting(true);
+  try {
+    await submitComment(id, commentForm.name, commentForm.email, commentForm.phone, commentForm.content, turnstileToken);
+    setCommentMessage('Comment submitted for approval.');
+    setCommentForm({ name: '', email: '', phone: '', content: '' });
+    setTurnstileToken(null);
+    // Refresh comments after a few seconds (though new comment is pending)
+    setTimeout(async () => {
+      const updated = await getCommentsByArticle(id);
+      setComments(updated);
+    }, 3000);
+  } catch (err) {
+    setCommentMessage(err.message);
+  } finally {
+    setCommentSubmitting(false);
+  }
+  };
 
   return (
     <div className="w-full">
@@ -271,6 +309,52 @@ const ArticlePage = () => {
                 />
               )}
             </div>
+
+            {/* Comments Section */}
+<div className="mt-8">
+  <div className="flex items-center gap-3 mb-6">
+    <div className="w-1.5 h-8 bg-ecn-navy rounded-full shrink-0" />
+    <h3 className="text-2xl md:text-3xl font-black text-ecn-dark-blue font-raum">
+      අදහස් ({comments.length})
+    </h3>
+  </div>
+
+  {/* Comment List */}
+  {comments.length > 0 ? (
+    <div className="space-y-6">
+      {comments.map(comment => (
+        <div key={comment.id} className="bg-gray-50 p-4 rounded-lg">
+          <div className="font-bold">{comment.user_name}</div>
+          <div className="text-sm text-gray-500">{new Date(comment.created_at).toLocaleString()}</div>
+          <div className="mt-2">{comment.content}</div>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <p className="text-gray-500">No comments yet. Be the first to comment!</p>
+  )}
+
+  {/* Comment Form */}
+  <form onSubmit={handleCommentSubmit} className="mt-8 bg-white p-6 rounded-lg shadow-sm border">
+    <h4 className="text-xl font-bold mb-4">Leave a Comment</h4>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <input type="text" name="name" placeholder="Your Name *" required value={commentForm.name} onChange={handleCommentChange} className="border rounded p-2" />
+      <input type="email" name="email" placeholder="Your Email *" required value={commentForm.email} onChange={handleCommentChange} className="border rounded p-2" />
+      <input type="tel" name="phone" placeholder="Phone (optional)" value={commentForm.phone} onChange={handleCommentChange} className="border rounded p-2" />
+      <div className="md:col-span-2">
+        <textarea name="content" placeholder="Your Comment *" required rows="4" value={commentForm.content} onChange={handleCommentChange} className="border rounded p-2 w-full"></textarea>
+      </div>
+    </div>
+    <Turnstile
+      sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+      onVerify={setTurnstileToken}
+    />
+    <button type="submit" disabled={commentSubmitting} className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50">
+      {commentSubmitting ? 'Submitting...' : 'Submit Comment'}
+    </button>
+    {commentMessage && <p className="mt-2 text-sm text-red-600">{commentMessage}</p>}
+  </form>
+</div>
 
             {/* Related News Section */}
             <div className="mt-6">
