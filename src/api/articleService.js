@@ -1,17 +1,15 @@
 import { supabase } from './supabaseClient';
 import { getAccessToken } from './tokenStore';
 
-
 /**
- * Fetch all articles with author and category info
- * @returns {Promise<Array>} List of articles with related data
+ * Fetch all articles with author and primary category info
  */
 export const getArticles = async () => {
   const { data, error } = await supabase
     .from('articles')
     .select(`
       *,
-      categories (name, slug),
+      categories!articles_category_id_fkey (name, slug),
       profiles (name, email)
     `)
     .order('created_at', { ascending: false });
@@ -21,30 +19,14 @@ export const getArticles = async () => {
 
 /**
  * Fetch a single article by ID
- * @param {string} id
- * @returns {Promise<Object>}
- 
-export const getArticleById = async (id) => {
-  const { data, error } = await supabase
-    .from('articles')
-    .select(`
-      *,
-      categories (name, slug),
-      profiles (name, email)
-    `)
-    .eq('id', id)
-    .single();
-  if (error) throw error;
-  return data;
-};*/
-
+ */
 export const getArticleById = async (id) => {
   console.log('Fetching article with id:', id);
   const { data, error } = await supabase
     .from('articles')
     .select(`
       *,
-      categories (name, slug),
+      categories!articles_category_id_fkey (name, slug),
       profiles (name, email)
     `)
     .eq('id', id)
@@ -56,13 +38,10 @@ export const getArticleById = async (id) => {
 
 /**
  * Create a new article
- * @param {Object} article - Article data
- * @returns {Promise<Object>}
  */
 export const createArticle = async (article) => {
   console.log('createArticle called with:', JSON.parse(JSON.stringify(article)));
 
-  // Use direct fetch to bypass Supabase client's internal getSession (which hangs with persistSession:false)
   const token = getAccessToken();
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -95,9 +74,6 @@ export const createArticle = async (article) => {
 
 /**
  * Update an existing article
- * @param {string} id
- * @param {Object} updates
- * @returns {Promise<Object>}
  */
 export const updateArticle = async (id, updates) => {
   const { data, error } = await supabase
@@ -111,7 +87,6 @@ export const updateArticle = async (id, updates) => {
 
 /**
  * Delete an article
- * @param {string} id
  */
 export const deleteArticle = async (id) => {
   const { error } = await supabase
@@ -134,7 +109,7 @@ export const getCategories = async () => {
 };
 
 /**
- * Fetch all authors (profiles with role editor or admin) for dropdown
+ * Fetch all authors (profiles with role editor or admin)
  */
 export const getAuthors = async () => {
   const { data, error } = await supabase
@@ -147,8 +122,6 @@ export const getAuthors = async () => {
 
 /**
  * Approve an article (admin only)
- * Sets status to 'published' and sets published_at if not already set
- * @param {string} id
  */
 export const approveArticle = async (id) => {
   const { error } = await supabase
@@ -163,7 +136,6 @@ export const approveArticle = async (id) => {
 
 /**
  * Request deletion of an article (editor)
- * @param {string} id
  */
 export const requestArticleDelete = async (id) => {
   const { error } = await supabase
@@ -175,7 +147,6 @@ export const requestArticleDelete = async (id) => {
 
 /**
  * Increment view count for an article
- * @param {string} id
  */
 export const incrementViewCount = async (id) => {
   const { error } = await supabase.rpc('increment_article_view', { article_id: id });
@@ -185,17 +156,14 @@ export const incrementViewCount = async (id) => {
 };
 
 /**
- * Get related articles (same category, published, exclude current, limit 6)
- * @param {string} articleId
- * @param {string} categoryId
- * @param {number} limit
+ * Get related articles (same primary category, published, exclude current)
  */
 export const getRelatedArticles = async (articleId, categoryId, limit = 6) => {
   const { data, error } = await supabase
     .from('articles')
     .select(`
       id, title, excerpt, image_url, published_at,
-      categories (name, slug),
+      categories!articles_category_id_fkey (name, slug),
       profiles (name)
     `)
     .eq('status', 'published')
@@ -207,20 +175,25 @@ export const getRelatedArticles = async (articleId, categoryId, limit = 6) => {
   return data;
 };
 
-// ... existing imports and functions ...
-
 /**
- * Fetch articles by category slug
+ * Fetch articles by category slug (using junction table)
  */
 export const getArticlesByCategorySlug = async (categorySlug, limit = 10, offset = 0) => {
+  const { data: cat } = await supabase
+    .from('categories')
+    .select('id')
+    .eq('slug', categorySlug)
+    .single();
+  if (!cat) return [];
+
   const { data, error } = await supabase
     .from('articles')
     .select(`
       *,
-      categories!inner(name, slug),
-      profiles(name, email)
+      profiles(name, email),
+      article_categories!inner(category_id)
     `)
-    .eq('categories.slug', categorySlug)
+    .eq('article_categories.category_id', cat.id)
     .eq('status', 'published')
     .order('published_at', { ascending: false })
     .range(offset, offset + limit - 1);
@@ -229,12 +202,11 @@ export const getArticlesByCategorySlug = async (categorySlug, limit = 10, offset
 };
 
 /**
- * Get articles for the homepage sections (hot, politics, local, business, sports, foreign)
- * Returns object with arrays keyed by section name
+ * Get articles for the homepage sections
  */
 export const getHomepageSections = async () => {
   const sectionSlugs = {
-    hot: null, // special handling
+    hot: null,
     politics: 'politics',
     local: 'local',
     business: 'business',
@@ -242,7 +214,6 @@ export const getHomepageSections = async () => {
     foreign: 'world',
   };
 
-  // Get category IDs for each slug
   const { data: categories } = await supabase
     .from('categories')
     .select('id, slug');
@@ -260,10 +231,10 @@ export const getHomepageSections = async () => {
     foreign: [],
   };
 
-  // Hot news (is_hot = true, published, limit 20)
+  // Hot news (is_hot = true, published)
   const { data: hotData } = await supabase
     .from('articles')
-    .select('*, categories(name, slug), profiles(name, email)')
+    .select('*, categories!articles_category_id_fkey(name, slug), profiles(name, email)')
     .eq('status', 'published')
     .eq('is_hot', true)
     .order('published_at', { ascending: false })
@@ -275,7 +246,7 @@ export const getHomepageSections = async () => {
   if (politicsId) {
     const { data: polData } = await supabase
       .from('articles')
-      .select('*, categories(name, slug), profiles(name, email)')
+      .select('*, categories!articles_category_id_fkey(name, slug), profiles(name, email)')
       .eq('status', 'published')
       .eq('category_id', politicsId)
       .order('published_at', { ascending: false })
@@ -288,7 +259,7 @@ export const getHomepageSections = async () => {
   if (localId) {
     const { data: localData } = await supabase
       .from('articles')
-      .select('*, categories(name, slug), profiles(name, email)')
+      .select('*, categories!articles_category_id_fkey(name, slug), profiles(name, email)')
       .eq('status', 'published')
       .eq('category_id', localId)
       .order('published_at', { ascending: false })
@@ -301,7 +272,7 @@ export const getHomepageSections = async () => {
   if (businessId) {
     const { data: bizData } = await supabase
       .from('articles')
-      .select('*, categories(name, slug), profiles(name, email)')
+      .select('*, categories!articles_category_id_fkey(name, slug), profiles(name, email)')
       .eq('status', 'published')
       .eq('category_id', businessId)
       .order('published_at', { ascending: false })
@@ -314,7 +285,7 @@ export const getHomepageSections = async () => {
   if (sportsId) {
     const { data: sportsData } = await supabase
       .from('articles')
-      .select('*, categories(name, slug), profiles(name, email)')
+      .select('*, categories!articles_category_id_fkey(name, slug), profiles(name, email)')
       .eq('status', 'published')
       .eq('category_id', sportsId)
       .order('published_at', { ascending: false })
@@ -327,7 +298,7 @@ export const getHomepageSections = async () => {
   if (foreignId) {
     const { data: foreignData } = await supabase
       .from('articles')
-      .select('*, categories(name, slug), profiles(name, email)')
+      .select('*, categories!articles_category_id_fkey(name, slug), profiles(name, email)')
       .eq('status', 'published')
       .eq('category_id', foreignId)
       .order('published_at', { ascending: false })
@@ -339,11 +310,9 @@ export const getHomepageSections = async () => {
 };
 
 /**
- * Get articles for sidebar sections (gossip, popular, health, beauty)
- * @returns {Promise<{gossip: array, popular: array, health: array, beauty: array}>}
+ * Get articles for sidebar sections
  */
 export const getSidebarArticles = async () => {
-  // Get category IDs
   const { data: categories } = await supabase
     .from('categories')
     .select('id, slug');
@@ -354,7 +323,7 @@ export const getSidebarArticles = async () => {
 
   const result = {
     gossip: [],
-    popular: [], // we'll use top viewed articles instead of a category
+    popular: [],
     health: [],
     beauty: [],
   };
@@ -364,7 +333,7 @@ export const getSidebarArticles = async () => {
   if (gossipId) {
     const { data: gossipData } = await supabase
       .from('articles')
-      .select('*, categories(name, slug), profiles(name, email)')
+      .select('*, categories!articles_category_id_fkey(name, slug), profiles(name, email)')
       .eq('status', 'published')
       .eq('category_id', gossipId)
       .order('published_at', { ascending: false })
@@ -372,21 +341,21 @@ export const getSidebarArticles = async () => {
     result.gossip = gossipData || [];
   }
 
-  // Popular articles (top viewed, published)
+  // Popular articles (top viewed)
   const { data: popularData } = await supabase
     .from('articles')
-    .select('*, categories(name, slug), profiles(name, email)')
+    .select('*, categories!articles_category_id_fkey(name, slug), profiles(name, email)')
     .eq('status', 'published')
     .order('view_count', { ascending: false })
     .limit(20);
   result.popular = popularData || [];
 
-  // Health (suwa diviya)
+  // Health (suwa-diviya)
   const healthId = catMap['suwa-diviya'];
   if (healthId) {
     const { data: healthData } = await supabase
       .from('articles')
-      .select('*, categories(name, slug), profiles(name, email)')
+      .select('*, categories!articles_category_id_fkey(name, slug), profiles(name, email)')
       .eq('status', 'published')
       .eq('category_id', healthId)
       .order('published_at', { ascending: false })
@@ -399,7 +368,7 @@ export const getSidebarArticles = async () => {
   if (beautyId) {
     const { data: beautyData } = await supabase
       .from('articles')
-      .select('*, categories(name, slug), profiles(name, email)')
+      .select('*, categories!articles_category_id_fkey(name, slug), profiles(name, email)')
       .eq('status', 'published')
       .eq('category_id', beautyId)
       .order('published_at', { ascending: false })
@@ -418,8 +387,8 @@ export const getFeaturedArticles = async (limit = 5) => {
     .from('articles')
     .select(`
       *,
-      categories(name, slug),
-      profiles(name, email)
+      categories!articles_category_id_fkey (name, slug),
+      profiles (name, email)
     `)
     .eq('status', 'published')
     .eq('is_featured', true)
@@ -430,17 +399,14 @@ export const getFeaturedArticles = async (limit = 5) => {
 };
 
 /**
- * Get articles by author ID (for author page)
- * @param {string} authorId
- * @param {number} page
- * @param {number} limit
+ * Get articles by author ID
  */
 export const getArticlesByAuthor = async (authorId, page = 1, limit = 6) => {
   const from = (page - 1) * limit;
   const to = from + limit - 1;
   const { data, error, count } = await supabase
     .from('articles')
-    .select('*, categories(name, slug), profiles(name, email)', { count: 'exact' })
+    .select('*, categories!articles_category_id_fkey(name, slug), profiles(name, email)', { count: 'exact' })
     .eq('author_id', authorId)
     .eq('status', 'published')
     .order('published_at', { ascending: false })
@@ -457,8 +423,8 @@ export const getHotArticles = async (limit = 20, offset = 0) => {
     .from('articles')
     .select(`
       *,
-      categories(name, slug),
-      profiles(name, email)
+      categories!articles_category_id_fkey (name, slug),
+      profiles (name, email)
     `)
     .eq('status', 'published')
     .eq('is_hot', true)
@@ -480,4 +446,52 @@ export const getLatestArticles = async (limit = 5) => {
     .limit(limit);
   if (error) throw error;
   return data;
+};
+
+// ============================================
+// MULTI-CATEGORY HELPER FUNCTIONS
+// ============================================
+
+/**
+ * Get all categories for an article (primary + additional)
+ */
+export const getArticleCategories = async (articleId) => {
+  const { data, error } = await supabase
+    .from('article_categories')
+    .select('category_id, categories(name, slug)')
+    .eq('article_id', articleId);
+  if (error) throw error;
+  return data.map(item => ({ id: item.category_id, name: item.categories.name, slug: item.categories.slug }));
+};
+
+/**
+ * Save categories for an article (delete existing, insert new)
+ */
+export const setArticleCategories = async (articleId, categoryIds) => {
+  const token = getAccessToken();
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+  // Delete existing
+  await fetch(`${supabaseUrl}/rest/v1/article_categories?article_id=eq.${articleId}`, {
+    method: 'DELETE',
+    headers: {
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  // Insert new if any
+  if (categoryIds.length === 0) return;
+  const inserts = categoryIds.map(catId => ({ article_id: articleId, category_id: catId }));
+  const response = await fetch(`${supabaseUrl}/rest/v1/article_categories`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(inserts),
+  });
+  if (!response.ok) throw new Error('Failed to save article categories');
 };

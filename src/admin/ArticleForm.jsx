@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { getUploadUrl, getPublicUrl } from '../api/r2Service';
 import { useAuth } from '../context/AuthContext';
+import { getArticleCategories, setArticleCategories } from '../api/articleService'; // added
 
 const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
   const { profile } = useAuth();
@@ -25,34 +26,42 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   useEffect(() => {
-    if (article) {
-      let contentValue = article.content || '';
-      if (!contentValue.includes('<') && !contentValue.includes('>')) {
-        contentValue = contentValue.split('\n\n').map(para => `<p>${para.trim()}</p>`).join('');
+    const fetchData = async () => {
+      if (article) {
+        let contentValue = article.content || '';
+        if (!contentValue.includes('<') && !contentValue.includes('>')) {
+          contentValue = contentValue.split('\n\n').map(para => `<p>${para.trim()}</p>`).join('');
+        }
+        setFormData({
+          title: article.title || '',
+          excerpt: article.excerpt || '',
+          content: contentValue,
+          image_url: article.image_url || '',
+          category_id: article.category_id || '',
+          author_id: article.author_id || '',
+          author_display_name: article.author_display_name || '',
+          status: article.status || 'draft',
+          is_hot: article.is_hot || false,
+          is_featured: article.is_featured || false,
+          published_at: article.published_at || null,
+        });
+        setPreview(article.image_url || '');
+        // Fetch additional categories
+        const existingCats = await getArticleCategories(article.id);
+        setSelectedCategories(existingCats.map(c => c.id));
+      } else {
+        // New article: auto-assign author from logged-in user
+        setFormData(prev => ({
+          ...prev,
+          author_id: profile?.id || '',
+        }));
+        setSelectedCategories([]);
       }
-      setFormData({
-        title: article.title || '',
-        excerpt: article.excerpt || '',
-        content: contentValue,
-        image_url: article.image_url || '',
-        category_id: article.category_id || '',
-        author_id: article.author_id || '',
-        author_display_name: article.author_display_name || '',
-        status: article.status || 'draft',
-        is_hot: article.is_hot || false,
-        is_featured: article.is_featured || false,
-        published_at: article.published_at || null,
-      });
-      setPreview(article.image_url || '');
-    } else {
-      // New article: auto-assign author from logged-in user
-      setFormData(prev => ({
-        ...prev,
-        author_id: profile?.id || '',
-      }));
-    }
+    };
+    fetchData();
   }, [article, profile]);
 
   const handleChange = (e) => {
@@ -96,6 +105,7 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
     e.preventDefault();
 
     const submitData = { ...formData };
+    let savedArticle;
 
     if (file) {
       try {
@@ -129,7 +139,20 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
     }
 
     console.log('Submitting article data:', submitData);
-    onSubmit(submitData);
+
+    try {
+      if (article) {
+        savedArticle = await updateArticle(article.id, submitData);
+        await setArticleCategories(article.id, selectedCategories);
+      } else {
+        savedArticle = await createArticle(submitData);
+        await setArticleCategories(savedArticle.id, selectedCategories);
+      }
+      onSubmit(savedArticle);
+    } catch (err) {
+      console.error('Error saving article:', err);
+      alert('Failed to save article. Check console.');
+    }
   };
 
   return (
@@ -165,7 +188,7 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Primary Category</label>
             <select
               name="category_id"
               value={formData.category_id}
@@ -178,6 +201,24 @@ const ArticleForm = ({ article, categories, authors, onSubmit, onCancel }) => {
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Additional Categories</label>
+            <select
+              multiple
+              value={selectedCategories}
+              onChange={(e) => {
+                const selected = Array.from(e.target.selectedOptions, option => option.value);
+                setSelectedCategories(selected);
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md h-32"
+            >
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
+            <p className="text-xs text-gray-500 mt-1">Hold Ctrl (Cmd on Mac) to select multiple categories.</p>
           </div>
 
           {/* Author field – hidden for new articles, visible for admin when editing */}
