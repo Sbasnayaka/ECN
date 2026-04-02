@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 const HorizontalNewsCard = ({
   id,
   image,
+  image_url,
   title,
   date,
   time,
+  published_at,
   excerpt,
   isHotNews,
 }) => {
@@ -19,7 +21,7 @@ const HorizontalNewsCard = ({
     return text;
   };
 
-  const displayDate = date || time;
+  const displayDate = date || time || (published_at ? new Date(published_at).toLocaleDateString() : null);
   return (
     <div className="flex bg-white hover:bg-gray-50 transition-colors group p-2 border-b border-gray-100 last:border-0 h-full">
       {/* Image (Left) */}
@@ -27,7 +29,7 @@ const HorizontalNewsCard = ({
         <Link to={`/article/${id}`}>
           <img
             src={
-              image ||
+              image || image_url ||
               "https://via.placeholder.com/150x150/e0e0e0/888888?text=img"
             }
             alt={title}

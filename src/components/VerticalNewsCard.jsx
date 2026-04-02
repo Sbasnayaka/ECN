@@ -4,13 +4,15 @@ import { Link } from "react-router-dom";
 const VerticalNewsCard = ({
   id,
   image,
+  image_url,
   title,
   date,
   time,
+  published_at,
   excerpt,
   showReadMore = false,
 }) => {
-  const displayDate = date || time;
+  const displayDate = date || time || (published_at ? new Date(published_at).toLocaleDateString() : null);
   // Truncate excerpt to precisely 10 words
   const getExcerpt = (text) => {
     if (!text) return "";
@@ -27,7 +29,7 @@ const VerticalNewsCard = ({
       <Link to={`/article/${id}`} className="w-full overflow-hidden">
         <img
           src={
-            image ||
+            image || image_url ||
             "https://via.placeholder.com/400x250/e0e0e0/888888?text=news+image"
           }
           alt={title}
