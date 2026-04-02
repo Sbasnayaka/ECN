@@ -63,7 +63,7 @@ const CategoryPage = ({ categoryName, categorySlug }) => {
                 </div>
                 <div className="sm:w-2/3 flex flex-col justify-center py-2">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-gray-400 text-xs font-medium">🕒 {new Date(article.published_at).toLocaleDateString()}</span>
+                    <span className="text-gray-400 text-xs font-medium"> {new Date(article.published_at).toLocaleDateString()}</span>
                   </div>
                   <Link to={`/article/${article.id}`}>
                     <h3 className="text-xl font-bold leading-tight mb-2 group-hover:text-blue-600 text-ecn-dark-blue transition-colors">

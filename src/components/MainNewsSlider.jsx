@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getHotArticles } from '../api/articleService'; // ✅ Changed import
+import { getHotArticles } from '../api/articleService';
 
 const MainNewsSlider = () => {
   const [slides, setSlides] = useState([]);

@@ -191,7 +191,7 @@ const ArticlePage = () => {
                       </Link>
                     </span>
                     <span className="flex items-center gap-1 font-bold">
-                      🕒 {formatPublishedDate(article.published_at || article.created_at)}
+                       {formatPublishedDate(article.published_at || article.created_at)}
                     </span>
                     <span className="flex items-center gap-1 font-bold">
                       👁 {article.view_count || 0} views
@@ -348,7 +348,7 @@ const ArticlePage = () => {
                           </h4>
                         </Link>
                         <span className="text-xs font-bold text-gray-400 block">
-                          🕒 {formatPublishedDate(related.published_at)}
+                           {formatPublishedDate(related.published_at)}
                         </span>
                       </div>
                     </div>
