@@ -24,8 +24,8 @@ const AuthorPage = () => {
     setLoading(true);
     try {
       const { data } = await getArticlesByAuthor(id, pageNum, limit);
-      if (data && data.length > 0 && reset) {
-         setAuthorName(data[0].article?.author_display_name || "ප්‍රවෘත්ති අංශය");
+      if (data?.length > 0 && reset) {
+        setAuthorName(data[0].articles?.author_display_name ?? "ප්‍රවෘත්ති අංශය");
       }
       if (reset) {
         setArticles(data || []);
@@ -45,6 +45,8 @@ const AuthorPage = () => {
     if (!hasMore || loading) return;
     fetchArticles(page + 1);
   };
+
+ 
 
   return (
     <div className="w-full">
