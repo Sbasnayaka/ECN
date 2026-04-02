@@ -9,9 +9,9 @@ export const useAuth = () => useContext(AuthContext);
 // ---------- sessionStorage helpers (survive refresh, cleared on tab close) ----------
 const SESSION_KEY = 'ecn_cms_session';
 
-const saveSession = (user, profile, token) => {
+const saveSession = (user, profile, token, refreshToken = null) => {
   try {
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ user, profile, token }));
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ user, profile, token, refreshToken }));
   } catch (_) {}
 };
 
@@ -49,13 +49,23 @@ export const AuthProvider = ({ children }) => {
     // but only update state if we get something meaningful back
     const getSession = async () => {
       console.log('Fetching session...');
+      // 1. Manually inject the saved session into the Supabase client so it doesn't freeze or drop on F5
+      if (saved?.token && saved?.refreshToken) {
+         try {
+           await supabase.auth.setSession({
+             access_token: saved.token,
+             refresh_token: saved.refreshToken
+           });
+         } catch(e) {}
+      }
+
       const { data: { session } } = await supabase.auth.getSession();
       console.log('Session:', session);
       if (session?.user) {
         setAccessToken(session.access_token);
         setUser(session.user);
         const freshProfile = await fetchProfile(session.user.id);
-        saveSession(session.user, freshProfile, session.access_token);
+        saveSession(session.user, freshProfile, session.access_token, session.refresh_token);
       }
       // Only call setLoading(false) here if we had no saved session
       // (otherwise it was already set to false above)
@@ -64,14 +74,18 @@ export const AuthProvider = ({ children }) => {
 
     getSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      console.log('Auth state changed:', _event, session);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session);
       if (session?.user) {
         setAccessToken(session.access_token);
         setUser(session.user);
         const freshProfile = await fetchProfile(session.user.id);
-        saveSession(session.user, freshProfile, session.access_token);
+        saveSession(session.user, freshProfile, session.access_token, session.refresh_token);
       } else {
+        // Prevent F5 reload from obliterating session
+        if (event === 'INITIAL_SESSION' && saved?.token) {
+           return; // let getSession() handle manual restore
+        }
         // Genuine sign-out or token expiry — clear everything
         setAccessToken(null);
         setUser(null);
@@ -81,7 +95,20 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    // Heartbeat to keep session alive and prevent JWT expiry hangs (runs every 5 mins)
+    const refresher = setInterval(async () => {
+      const current = loadSession();
+      if (current?.token && current?.refreshToken) {
+         console.log('Proactively refreshing session to prevent hangs...');
+         const { error } = await supabase.auth.refreshSession();
+         if (error) console.error('Background refresh failed', error);
+      }
+    }, 5 * 60 * 1000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearInterval(refresher);
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Returns the profile object so callers can use it; also updates state
