@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getArticlesByCategorySlug } from '../api/articleService';
 import SectionHeader from './SectionHeader';
 import VerticalNewsCard from './VerticalNewsCard';
@@ -123,7 +124,9 @@ console.log('Rendering RightSidebar, youtubeEnabled:', youtubeEnabled);
 
       {/* Gossip */}
       <div className="flex flex-col bg-white border border-gray-100 shadow-sm">
-        <SectionHeader title="ගොසිප්" theme="goldenAmber" />
+        <Link to="/gossip">
+          <SectionHeader title="ගොසිප්" theme="goldenAmber" />
+        </Link>
         <div className="flex flex-col gap-4 p-4">
           {gossipArticles.map((article) => (
             <VerticalNewsCard key={article.id} {...article} />
@@ -143,12 +146,14 @@ console.log('Rendering RightSidebar, youtubeEnabled:', youtubeEnabled);
 
       {/* Popular News (custom layout) */}
       <div className="flex flex-col bg-white border border-gray-100 shadow-sm">
-        <SectionHeader title="ජනප්‍රිය පුවත්" theme="violet" />
+        <Link to="/popular">
+          <SectionHeader title="ජනප්‍රිය පුවත්" theme="violet" />
+        </Link>
         <div className="flex flex-col">
           {popularArticles.map((article) => (
             <div key={article.id} className="group cursor-pointer flex flex-row gap-3 px-3 py-3 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors">
               <div className="flex-shrink-0 w-32 h-28 overflow-hidden">
-                <img src={article.image_url} alt={article.title} className="w-full h-full object-cover bg-gray-200 group-hover:scale-105 transition-transform duration-500" />
+                <img src={article.image_url || "https://via.placeholder.com/150x150/e0e0e0/888888?text=news+image"} alt={article.title} className="w-full h-full object-cover bg-gray-200 group-hover:scale-105 transition-transform duration-500" />
               </div>
               <div className="flex flex-col gap-1 flex-1 min-w-0">
                 <h3 className="font-raum font-bold text-lg md:text-xl leading-snug text-ecn-black group-hover:text-blue-700 transition-colors line-clamp-3">
@@ -168,7 +173,9 @@ console.log('Rendering RightSidebar, youtubeEnabled:', youtubeEnabled);
 
       {/* Suwa Diviya */}
       <div className="flex flex-col bg-white border border-gray-100 shadow-sm">
-        <SectionHeader title="සුව දිවිය" theme="lightGreen" />
+        <Link to="/suwa-diviya">
+          <SectionHeader title="සුව දිවිය" theme="lightGreen" />
+        </Link>
         <div className="flex flex-col gap-4 p-4">
           {suwaArticles.map((article) => (
             <VerticalNewsCard key={article.id} {...article} />
@@ -188,7 +195,9 @@ console.log('Rendering RightSidebar, youtubeEnabled:', youtubeEnabled);
 
       {/* Roosar */}
       <div className="flex flex-col bg-white border border-gray-100 shadow-sm">
-        <SectionHeader title="රූසර" theme="brownGold" />
+        <Link to="/roosar">
+          <SectionHeader title="රූසර" theme="brownGold" />
+        </Link>
         <div className="flex flex-col gap-4 p-4">
           {roosarArticles.map((article) => (
             <VerticalNewsCard key={article.id} {...article} />
