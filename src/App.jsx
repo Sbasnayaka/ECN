@@ -25,6 +25,7 @@ import Terms from './pages/Terms';
 import AdvertisingPolicy from './pages/AdvertisingPolicy';
 import YouTubeSettings from './admin/YouTubeSettings';
 import GalleryItemPage from './pages/GalleryItemPage';
+import AuthorPage from './pages/AuthorPage';
 import AdDashboard from './admin/AdDashboard';
 import CreateEditor from './admin/CreateEditor';
 import Comments from './admin/Comments';
@@ -73,6 +74,7 @@ function App() {
               <Route path="/" element={<Home />} />
               {/* Dynamic Single Article Route */}
               <Route path="/article/:id" element={<ArticlePage />} />
+              <Route path="/author/:id" element={<AuthorPage />} />
 
               {/* Category Routes */}
               <Route

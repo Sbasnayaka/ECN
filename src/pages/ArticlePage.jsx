@@ -125,7 +125,8 @@ const ArticlePage = () => {
   };
 
   // Combine primary category and additional categories for display
-  const allCategories = article.categories ? [{ id: article.category_id, name: article.categories.name, slug: article.categories.slug }, ...articleCategories] : [...articleCategories];
+  const combinedCategories = article.categories ? [{ id: article.category_id, name: article.categories.name, slug: article.categories.slug }, ...articleCategories] : [...articleCategories];
+  const allCategories = Array.from(new Map(combinedCategories.map(cat => [cat.id, cat])).values());
 
   return (
     <div className="w-full">
